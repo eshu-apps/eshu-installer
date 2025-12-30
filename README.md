@@ -10,7 +10,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
-[![Premium](https://img.shields.io/badge/premium-$4.99%2Fmonth-gold.svg)](https://eshu-installer.com/upgrade)
+[![Premium](https://img.shields.io/badge/premium-$9.99%2Fmonth-gold.svg)](https://eshu-installer.com/upgrade)
 
 </div>
 
@@ -43,6 +43,14 @@
 - Caches system state for fast queries
 - Tracks available package managers
 - Systemd service integration
+
+📦 **Eshu's Path (Premium)** - NEW!
+- Curated package bundles for complete setups
+- Installing Hyprland? Get the full Wayland ecosystem (15 packages)
+- NVIDIA drivers? Get the complete proprietary stack
+- Rust development? Get the full toolchain
+- 10+ curated paths for common scenarios
+- Saves hours of research and manual configuration
 
 📸 **Time Machine (Premium)**
 - Automatic snapshots before installations
@@ -405,8 +413,9 @@ Example configuration:
 - ✅ 10 AI queries/day
 - ✅ All package managers
 
-### Premium ($4.99/month)
+### Premium ($9.99/month)
 - ✅ **Everything in Free**
+- ✅ **📦 Eshu's Path** - Curated package bundles (NEW!)
 - ✅ Unlimited AI queries
 - ✅ Automatic snapshots & rollback
 - ✅ Community hardware warnings
@@ -414,7 +423,7 @@ Example configuration:
 - ✅ Lightweight suggestions
 - ✅ Priority support
 
-[**Upgrade to Premium →**](https://eshu-installer.com/upgrade)
+[**Upgrade to Premium →**](https://eshu-installer.com/upgrade) | [💝 Donate →](https://github.com/sponsors/eshu-apps)
 
 ## 🔧 Troubleshooting
 

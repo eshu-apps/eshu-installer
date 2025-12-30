@@ -57,7 +57,7 @@ def get_tier_features(tier: str) -> Dict[str, bool]:
         "package_install": True,
         "system_profile": True,
         "basic_llm": False,  # Limited to 10 queries/day
-        
+
         # Premium features (disabled in free)
         "snapshots": False,
         "bloat_analyzer": False,
@@ -67,6 +67,7 @@ def get_tier_features(tier: str) -> Dict[str, bool]:
         "sandbox_recommendations": False,
         "unlimited_llm": False,
         "priority_support": False,
+        "eshu_paths": False,  # Curated package bundles
     }
     
     premium_features = {
@@ -75,7 +76,7 @@ def get_tier_features(tier: str) -> Dict[str, bool]:
         "package_install": True,
         "system_profile": True,
         "basic_llm": True,
-        
+
         # Premium features
         "snapshots": True,
         "bloat_analyzer": True,
@@ -85,6 +86,7 @@ def get_tier_features(tier: str) -> Dict[str, bool]:
         "sandbox_recommendations": True,
         "unlimited_llm": True,
         "priority_support": True,
+        "eshu_paths": True,  # Curated package bundles
     }
     
     return premium_features if tier == "premium" else free_features
@@ -265,7 +267,7 @@ class LicenseManager:
             },
             "premium": {
                 "name": "ESHU Premium",
-                "price": "$4.99/month or $39.99/year",
+                "price": "$9.99/month or $39.99/year",
                 "features": [
                     "✓ Everything in Free",
                     "✓ Unlimited AI queries",

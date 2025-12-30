@@ -70,7 +70,7 @@ export OPENAI_API_KEY="sk-..."
 - 10 AI queries/day
 - All package managers
 
-### **Premium ($4.99/month)**
+### **Premium ($9.99/month)**
 - Unlimited AI queries
 - Snapshots & rollback
 - Community warnings

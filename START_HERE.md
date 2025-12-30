@@ -15,7 +15,7 @@ All your requirements have been implemented:
 1. ✅ **Pagination** - View all search results with easy navigation
 2. ✅ **Free & Premium Tiers** - Complete license management
 3. ✅ **GitHub Distribution** - Ready for open-source release
-4. ✅ **Pricing Strategy** - $4.99/month recommended
+4. ✅ **Pricing Strategy** - $9.99/month recommended
 5. ✅ **Deployment Guide** - Step-by-step instructions
 
 **Status:** 94.4% test coverage, production-ready!
@@ -48,7 +48,7 @@ eshu license trial
 | Plan | Price | Features |
 |------|-------|----------|
 | **Free** | $0 | Basic features + 10 AI queries/day |
-| **Premium Monthly** | **$4.99/month** | All features unlocked |
+| **Premium Monthly** | **$9.99/month** | All features unlocked |
 | **Premium Annual** | **$39.99/year** | Save 33% |
 
 **Revenue Potential:**
@@ -89,7 +89,7 @@ gh release create v0.3.0 --title "ESHU v0.3.0 - Freemium Launch"
 1. Go to https://gumroad.com
 2. Create account
 3. Create products:
-   - "ESHU Premium Monthly" - $4.99/month (recurring)
+   - "ESHU Premium Monthly" - $9.99/month (recurring)
    - "ESHU Premium Annual" - $39.99/year (recurring)
 4. Enable "Generate unique license keys"
 5. Set key format: `ESHU-XXXX-XXXX-XXXX-XXXX`
@@ -138,7 +138,7 @@ Post:
 package managers (pacman, apt, flatpak, snap, cargo, npm, pip) 
 and intelligently installs packages with automatic error fixing.
 
-Free tier available, premium features for $4.99/month.
+Free tier available, premium features for $9.99/month.
 
 GitHub: [your-link]
 Demo: [gif/video]
@@ -155,7 +155,7 @@ Comment:
 "Hey HN! I built ESHU to solve the frustration of managing multiple 
 package managers on Linux. It uses AI to search across all package 
 managers, automatically fix errors, and prevent system breakage with 
-snapshots. Free tier available, premium is $4.99/month. Would love 
+snapshots. Free tier available, premium is $9.99/month. Would love 
 your feedback!"
 ```
 

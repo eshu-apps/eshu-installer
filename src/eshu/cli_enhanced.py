@@ -18,6 +18,7 @@ from .package_search import PackageSearcher, PackageResult
 from .llm_engine import LLMEngine
 from .installer import PackageInstaller
 from .license_manager import LicenseManager, License
+from .eshu_paths import get_eshu_path, ESHU_PATHS
 
 app = typer.Typer(
     name="eshu",
@@ -40,7 +41,8 @@ def check_license_feature(license_mgr: LicenseManager, feature: str, show_messag
                 "bloat_analyzer": "Smart Bloat Analyzer",
                 "community_warnings": "AI-Powered Hardware Warnings",
                 "lightweight_suggestions": "Lightweight Package Suggestions",
-                "unlimited_llm": "Unlimited AI Queries"
+                "unlimited_llm": "Unlimited AI Queries",
+                "eshu_paths": "Eshu's Path - Curated Package Bundles"
             }
             feature_name = feature_names.get(feature, feature.replace("_", " ").title())
 
@@ -257,10 +259,50 @@ def install(
         config = load_config()
         license_mgr = LicenseManager(cache_dir=config.cache_dir)
         license = license_mgr.get_license()
-        
+
+        # Check for Eshu's Path - PREMIUM FEATURE
+        eshu_path = get_eshu_path(query)
+        if eshu_path:
+            if check_license_feature(license_mgr, "eshu_paths", show_message=False):
+                # Premium user - show Eshu's Path option
+                console.print(f"\n[bold cyan]📦 Eshu's Path Available![/bold cyan]")
+                console.print(Panel(
+                    f"[bold]{eshu_path.name}[/bold]\n\n"
+                    f"{eshu_path.description}\n\n"
+                    f"[green]Includes {len(eshu_path.packages)} packages:[/green]\n"
+                    f"{', '.join(eshu_path.packages[:5])}{'...' if len(eshu_path.packages) > 5 else ''}\n\n"
+                    f"[dim]{eshu_path.reasoning}[/dim]",
+                    title="🎯 Complete Setup",
+                    border_style="cyan"
+                ))
+
+                if Confirm.ask("\nInstall the complete Eshu's Path bundle?", default=True):
+                    console.print(f"\n[green]✨ Installing {len(eshu_path.packages)} packages from Eshu's Path...[/green]\n")
+                    # TODO: Implement multi-package installation
+                    for pkg in eshu_path.packages:
+                        console.print(f"  • {pkg}")
+                    console.print(f"\n[yellow]Multi-package installation coming soon![/yellow]")
+                    console.print(f"[dim]For now, install individually: pacman -S {' '.join(eshu_path.packages)}[/dim]\n")
+                    return
+            else:
+                # Free user - show teaser
+                console.print(f"\n[bold cyan]💎 Eshu's Path Available (Premium)[/bold cyan]")
+                console.print(Panel(
+                    f"[bold]{eshu_path.name}[/bold]\n\n"
+                    f"Complete setup with {len(eshu_path.packages)} curated packages:\n"
+                    f"{', '.join(eshu_path.packages[:3])}...\n\n"
+                    f"[yellow]🔒 Unlock Eshu's Path with Premium[/yellow]\n"
+                    f"[dim]Get complete, tested package bundles for instant setups\n"
+                    f"Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://github.com/sponsors/eshu-apps[/dim]",
+                    title="🚀 Complete Setup (Premium)",
+                    border_style="yellow"
+                ))
+                if not Confirm.ask("\nContinue with single package install?", default=True):
+                    return
+
         # Show license tier
         console.print(f"[dim]ESHU {license.tier.title()}[/dim]")
-        
+
         # Check snapshot feature
         if snapshot and not check_license_feature(license_mgr, "snapshots"):
             snapshot = False
@@ -483,14 +525,16 @@ def license_cmd(
             console.print(f"\n[bold cyan]💎 Upgrade to ESHU Premium[/bold cyan]\n")
             console.print("Visit: [cyan]https://eshu-installer.com/upgrade[/cyan]")
             console.print("\n[green]✨ Premium Benefits:[/green]")
-            console.print("  • Unlimited AI queries")
-            console.print("  • System snapshots (Time Machine)")
-            console.print("  • Smart bloat analyzer")
-            console.print("  • Community warnings")
-            console.print("  • Adaptive error fixing")
-            console.print("  • Priority support")
+            console.print("  • 📦 Eshu's Path - Curated package bundles for complete setups")
+            console.print("  • 🤖 Unlimited AI queries (Free: 10/day)")
+            console.print("  • 📸 System snapshots (Time Machine for Linux)")
+            console.print("  • 🧹 Smart bloat analyzer")
+            console.print("  • ⚠️  Community hardware warnings")
+            console.print("  • 💡 Lightweight package suggestions")
+            console.print("  • 🔧 Adaptive error fixing")
+            console.print("  • 🎯 Priority support")
             console.print("\n[yellow]💰 Pricing:[/yellow]")
-            console.print("  • $4.99/month")
+            console.print("  • $9.99/month")
             console.print("  • $39.99/year (save 33%)")
             console.print("\n[cyan]💝 Just want to support? Donate:[/cyan]")
             console.print("   https://github.com/sponsors/eshu-apps")
@@ -503,6 +547,20 @@ def license_cmd(
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
         sys.exit(1)
+
+
+@app.command()
+def donate():
+    """Support ESHU development with a donation"""
+    console.print("\n[bold cyan]💝 Support ESHU Development[/bold cyan]\n")
+    console.print("ESHU is free and open source. Your support helps keep it that way!\n")
+    console.print("[green]Ways to support:[/green]")
+    console.print("  💝 GitHub Sponsors: https://github.com/sponsors/eshu-apps")
+    console.print("  💎 Upgrade to Premium: $9.99/month (https://eshu-installer.com/upgrade)")
+    console.print("  ⭐ Star on GitHub: https://github.com/eshu-apps/eshu-installer")
+    console.print("  📣 Share with friends")
+    console.print("\n[yellow]Every contribution matters![/yellow]")
+    console.print("[dim]Even $1 helps cover server costs and keeps development active.[/dim]\n")
 
 
 @app.command()

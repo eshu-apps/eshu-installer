@@ -131,7 +131,7 @@ eshu-installer/
 - ✅ Package size and OS optimization info
 - ✅ Paginated search results
 
-#### **ESHU Premium ($4.99/month or $39.99/year)**
+#### **ESHU Premium ($9.99/month or $39.99/year)**
 - ✅ Everything in Free
 - ✅ **Unlimited AI queries**
 - ✅ **System snapshots** (Time Machine for Linux)
@@ -172,7 +172,7 @@ free_features = {
 
 ### Recommended Pricing
 
-**Monthly Plan: $4.99/month**
+**Monthly Plan: $9.99/month**
 - Target: Casual users, hobbyists
 - Billed monthly
 - Cancel anytime
@@ -193,7 +193,7 @@ free_features = {
    - GitHub Copilot: $10/month
    - JetBrains IDEs: $8.90/month
    - Setapp (Mac): $9.99/month
-   - **ESHU at $4.99/month is affordable and competitive**
+   - **ESHU at $9.99/month is affordable and competitive**
 
 2. **Value Proposition:**
    - Saves hours of package management frustration
@@ -206,9 +206,9 @@ free_features = {
    - Developers (productivity tools budget)
 
 4. **Revenue Projections:**
-   - 100 users × $4.99 = $499/month
-   - 500 users × $4.99 = $2,495/month
-   - 1,000 users × $4.99 = $4,990/month
+   - 100 users × $9.99 = $499/month
+   - 500 users × $9.99 = $2,495/month
+   - 1,000 users × $9.99 = $4,990/month
    - **With 1,000 users, that's ~$60K/year revenue**
 
 ---
@@ -313,7 +313,7 @@ Deploy on:
 
 1. **Create Gumroad account**: https://gumroad.com
 2. **Create products:**
-   - ESHU Premium Monthly ($4.99/month)
+   - ESHU Premium Monthly ($9.99/month)
    - ESHU Premium Annual ($39.99/year)
    - ESHU Lifetime ($99.99 one-time)
 
@@ -371,7 +371,7 @@ license_key = generate_license_key(subscription.id)
 ```markdown
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](https://github.com/yourusername/eshu-installer/releases)
-[![Premium](https://img.shields.io/badge/premium-$4.99%2Fmonth-gold.svg)](https://eshu-installer.com/upgrade)
+[![Premium](https://img.shields.io/badge/premium-$9.99%2Fmonth-gold.svg)](https://eshu-installer.com/upgrade)
 ```
 
 **Feature comparison table in README**

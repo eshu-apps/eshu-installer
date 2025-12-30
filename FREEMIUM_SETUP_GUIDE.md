@@ -85,7 +85,7 @@ eshu license-cmd usage
 1. **Create Account**: https://gumroad.com/signup
 2. **Create Product**:
    - Product Name: "ESHU Premium"
-   - Price: $4.99/month
+   - Price: $9.99/month
    - Description: "Unlimited AI queries, snapshots, bloat analyzer, and more"
 3. **Enable License Keys**:
    - Settings → License Keys → Enable
@@ -100,7 +100,7 @@ eshu license-cmd usage
 **What Happens:**
 - User clicks "Upgrade" link in app
 - Goes to your Gumroad page
-- Pays $4.99
+- Pays $9.99
 - Receives license key via email: `ESHU-ABC1-DEF2-GHI3-JKL4`
 - Activates with: `eshu license-cmd activate ESHU-ABC1-DEF2-GHI3-JKL4`
 
@@ -177,7 +177,7 @@ return "https://gumroad.com/l/eshu-premium"  # Your product URL
 ```bash
 # Go to: https://gumroad.com
 # Create account
-# Create product: "ESHU Premium - $4.99/month"
+# Create product: "ESHU Premium - $9.99/month"
 # Enable license keys
 # Copy your product URL (e.g., gumroad.com/l/eshu-premium)
 ```
@@ -237,7 +237,7 @@ Clicks upgrade link
     ↓
 Goes to Gumroad page
     ↓
-Pays $4.99/month
+Pays $9.99/month
     ↓
 Receives license key via email
     ↓
@@ -303,7 +303,7 @@ Upgrade at: https://gumroad.com/l/eshu-premium
 
 Before launching:
 - [ ] Create Gumroad account
-- [ ] Create "ESHU Premium" product ($4.99/month)
+- [ ] Create "ESHU Premium" product ($9.99/month)
 - [ ] Enable license key generation
 - [ ] Copy your product URL
 - [ ] Update `license_manager.py` with real URL

@@ -244,8 +244,9 @@ class LicenseManager:
     
     def get_upgrade_url(self) -> str:
         """Get URL to upgrade to premium"""
-        # Update this with your actual payment page URL (Gumroad, Stripe, etc.)
-        return "https://your-payment-page.com/eshu-premium"
+        # UPDATE THIS: Replace with your actual Gumroad product URL after setup
+        # Format: https://YOUR-USERNAME.gumroad.com/l/PRODUCT-SLUG
+        return "https://eshu-apps.gumroad.com/l/eshu-premium"
     
     def show_feature_comparison(self) -> Dict[str, Any]:
         """Get feature comparison for display"""

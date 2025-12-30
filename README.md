@@ -10,13 +10,27 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
-[![Premium](https://img.shields.io/badge/premium-$9.99%2Fmonth-gold.svg)](https://eshu-installer.com/upgrade)
+[![Premium](https://img.shields.io/badge/premium-$9.99%2Fmonth-gold.svg)](https://eshu-apps.gumroad.com/l/eshu-premium)
+
+</div>
+
+---
+
+<div align="center">
+
+<img src="assets/horizontal.png" alt="ESHU Banner" width="100%"/>
 
 </div>
 
 ---
 
 **ESHU** is an intelligent, AI-powered package installer that unifies all Linux package managers under a single natural language interface. No more remembering whether to use `pacman`, `apt`, `yay`, `cargo`, `npm`, or any other package manager - just tell ESHU what you want to install.
+
+<div align="center">
+
+<img src="assets/eshufin.png" alt="ESHU Features" width="80%"/>
+
+</div>
 
 ## ✨ Features
 
@@ -423,7 +437,7 @@ Example configuration:
 - ✅ Lightweight suggestions
 - ✅ Priority support
 
-[**Upgrade to Premium →**](https://eshu-installer.com/upgrade) | [💝 Donate →](https://github.com/sponsors/eshu-apps)
+[**Upgrade to Premium →**](https://eshu-apps.gumroad.com/l/eshu-premium) | [💝 Donate →](https://github.com/sponsors/eshu-apps)
 
 ## 🔧 Troubleshooting
 

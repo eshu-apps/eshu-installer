@@ -485,6 +485,95 @@ def license_cmd(
         sys.exit(1)
 
 
+@app.command()
+def setup():
+    """Run interactive setup wizard to configure ESHU"""
+    import subprocess
+
+    console.print("\n[bold cyan]🚀 ESHU Setup Wizard[/bold cyan]\n")
+
+    # LLM Configuration
+    console.print("[bold]🤖 Step 1: LLM Configuration[/bold]")
+    console.print("\nESHU uses AI for intelligent package recommendations.")
+    console.print("\nChoose your LLM provider:")
+    console.print("  [cyan]1[/cyan]) Anthropic Claude (recommended, requires API key)")
+    console.print("     Get free key at: https://console.anthropic.com/")
+    console.print("  [cyan]2[/cyan]) OpenAI GPT (requires API key)")
+    console.print("     Get key at: https://platform.openai.com/api-keys")
+    console.print("  [cyan]3[/cyan]) Ollama (local, free, requires Ollama)")
+    console.print("     Install from: https://ollama.ai")
+    console.print("  [cyan]4[/cyan]) Skip for now\n")
+
+    choice = Prompt.ask("Enter choice", choices=["1", "2", "3", "4"], default="4")
+
+    if choice == "1":
+        console.print("\n[bold]📝 Anthropic Claude Setup[/bold]")
+        console.print("Get your API key from: https://console.anthropic.com/")
+        api_key = Prompt.ask("Enter your Anthropic API key", password=True)
+        if api_key:
+            subprocess.run(["eshu", "config", "set-provider", "anthropic"], check=False)
+            subprocess.run(["eshu", "config", "set-key", api_key], check=False)
+            console.print("[green]✅ Anthropic Claude configured![/green]")
+    elif choice == "2":
+        console.print("\n[bold]📝 OpenAI GPT Setup[/bold]")
+        console.print("Get your API key from: https://platform.openai.com/api-keys")
+        api_key = Prompt.ask("Enter your OpenAI API key", password=True)
+        if api_key:
+            subprocess.run(["eshu", "config", "set-provider", "openai"], check=False)
+            subprocess.run(["eshu", "config", "set-key", api_key], check=False)
+            console.print("[green]✅ OpenAI GPT configured![/green]")
+    elif choice == "3":
+        subprocess.run(["eshu", "config", "set-provider", "ollama"], check=False)
+        console.print("[green]✅ Ollama configured![/green]")
+        console.print("[dim]💡 Make sure you've pulled a model: ollama pull llama3.1:8b[/dim]")
+    else:
+        console.print("[yellow]⏩ Skipping LLM configuration[/yellow]")
+
+    # Systemd Service
+    console.print("\n[bold]⚙️  Step 2: System Profiling Service (Optional)[/bold]")
+    console.print("\nInstall systemd service for automatic system profiling?")
+    console.print("Benefits:")
+    console.print("  ✅ Faster package searches (pre-cached system info)")
+    console.print("  ✅ Automatic updates on boot")
+
+    if Confirm.ask("\nInstall systemd service?", default=False):
+        try:
+            from pathlib import Path
+            # Look for systemd files
+            install_dir = Path(__file__).parent.parent.parent
+            service_dir = install_dir / "systemd"
+
+            if service_dir.exists():
+                subprocess.run([
+                    "sudo", "cp",
+                    str(service_dir / "eshu-profiler.service"),
+                    "/etc/systemd/system/"
+                ], check=True)
+                subprocess.run([
+                    "sudo", "cp",
+                    str(service_dir / "eshu-profiler.timer"),
+                    "/etc/systemd/system/"
+                ], check=True)
+                subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+                subprocess.run(["sudo", "systemctl", "enable", "--now", "eshu-profiler.timer"], check=True)
+                console.print("[green]✅ Systemd service installed and enabled![/green]")
+            else:
+                console.print("[yellow]⚠️  Systemd service files not found[/yellow]")
+        except subprocess.CalledProcessError:
+            console.print("[red]❌ Failed to install systemd service (requires sudo)[/red]")
+    else:
+        console.print("[yellow]⏩ Skipping systemd service[/yellow]")
+
+    # Summary
+    console.print("\n[bold green]✅ Setup Complete![/bold green]")
+    console.print("\n[cyan]Try these commands:[/cyan]")
+    console.print("  eshu search firefox")
+    console.print("  eshu install hyprland")
+    console.print("  eshu profile")
+    console.print("  eshu license-cmd status")
+    console.print("\n[dim]Run 'eshu --help' for full command list[/dim]\n")
+
+
 # Import remaining commands from original CLI
 from .cli import profile, cleanup, snapshot, config_cmd, version
 

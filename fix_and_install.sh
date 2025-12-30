@@ -42,14 +42,26 @@ if command -v eshu &> /dev/null; then
     eshu --help | head -10
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo "🎉 ESHU IS READY!"
+    echo "🎉 ESHU IS INSTALLED!"
     echo ""
-    echo "Test it:"
-    echo "  eshu license-cmd status    ← Check free tier status"
-    echo "  eshu snapshot list         ← Should prompt for Premium"
-    echo "  eshu cleanup               ← Should prompt for Premium"
-    echo "  eshu search firefox        ← Should work (free tier)"
-    echo ""
+
+    # Ask if user wants to run setup wizard
+    read -p "Run setup wizard to configure LLM and systemd service? [Y/n]: " run_setup
+
+    if [[ "$run_setup" =~ ^[Yy]?$ ]] || [[ -z "$run_setup" ]]; then
+        echo ""
+        eshu setup
+    else
+        echo ""
+        echo "⏩ Skipping setup. Run 'eshu setup' anytime to configure."
+        echo ""
+        echo "Test it:"
+        echo "  eshu license-cmd status    ← Check free tier status"
+        echo "  eshu snapshot list         ← Should prompt for Premium"
+        echo "  eshu cleanup               ← Should prompt for Premium"
+        echo "  eshu search firefox        ← Should work (free tier)"
+        echo ""
+    fi
 else
     echo "   ⚠️  eshu not in PATH"
     echo ""

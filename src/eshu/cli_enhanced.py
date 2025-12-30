@@ -22,20 +22,32 @@ from .license_manager import LicenseManager, License
 app = typer.Typer(
     name="eshu",
     help="ESHU - AI-Driven Universal Package Installer for Linux",
-    add_completion=True
+    add_completion=False,  # Disable confusing shell completion prompts
+    rich_markup_mode="rich"
 )
 console = Console()
 
 
-def check_license_feature(license_mgr: LicenseManager, feature: str) -> bool:
-    """Check if license allows feature and show upgrade message if not"""
+def check_license_feature(license_mgr: LicenseManager, feature: str, show_message: bool = True) -> bool:
+    """Check if license allows feature and optionally show upgrade message"""
     license = license_mgr.get_license()
-    
+
     if not license.has_feature(feature):
-        console.print(f"\n[yellow]🔒 This feature requires ESHU Premium[/yellow]")
-        console.print(f"[dim]Upgrade at: {license_mgr.get_upgrade_url()}[/dim]\n")
+        if show_message:
+            # Clear message about WHAT is premium
+            feature_names = {
+                "snapshots": "System Snapshots & Rollback",
+                "bloat_analyzer": "Smart Bloat Analyzer",
+                "community_warnings": "AI-Powered Hardware Warnings",
+                "lightweight_suggestions": "Lightweight Package Suggestions",
+                "unlimited_llm": "Unlimited AI Queries"
+            }
+            feature_name = feature_names.get(feature, feature.replace("_", " ").title())
+
+            console.print(f"\n[yellow]🔒 '{feature_name}' is a Premium feature[/yellow]")
+            console.print(f"[dim]Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://github.com/sponsors/eshu-apps[/dim]\n")
         return False
-    
+
     return True
 
 
@@ -60,12 +72,12 @@ def display_paginated_results(
         
         table = Table(show_header=True, header_style="bold magenta", show_lines=True)
         table.add_column("#", style="dim", width=4)
-        table.add_column("Package", style="cyan", width=20)
+        table.add_column("Package", style="cyan", width=20, no_wrap=False)
         table.add_column("Version", style="green", width=12)
         table.add_column("Manager", style="yellow", width=10)
         table.add_column("Size", style="blue", width=10)
         table.add_column("OS", style="magenta", width=10)
-        table.add_column("Description", style="white", width=50)
+        table.add_column("Description", style="white", no_wrap=False, overflow="fold")
         
         for i, (result, recommendation) in enumerate(page_results, start=start_idx + 1):
             # Format size
@@ -79,8 +91,8 @@ def display_paginated_results(
             }
             os_str = os_emoji.get(result.os_optimized, result.os_optimized)
             
-            # Color-code description based on status
-            desc_text = Text(result.description[:50] + "..." if len(result.description) > 50 else result.description)
+            # Color-code description based on status (no truncation)
+            desc_text = Text(result.description)
             if result.installed:
                 desc_text.stylize("dim italic")
             
@@ -315,8 +327,8 @@ def install(
         # Rank results
         ranked_results = searcher.rank_results(all_results, query)
         
-        # Get LLM recommendations (if available and premium)
-        if can_use_llm and check_license_feature(license_mgr, "community_warnings"):
+        # Get LLM recommendations (if available and premium) - silently check
+        if can_use_llm and check_license_feature(license_mgr, "community_warnings", show_message=False):
             console.print("\n[yellow]🤖 Analyzing results and checking for known issues...[/yellow]")
             recommended_results = llm.rank_and_recommend(query, ranked_results[:20], profile, check_community=True)
         else:
@@ -335,11 +347,15 @@ def install(
         if recommendation:
             console.print(f"\n[green]✨ {recommendation}[/green]")
         
-        # Check for lightweight alternative (premium feature)
-        if check_license_feature(license_mgr, "lightweight_suggestions"):
+        # Check for lightweight alternative (premium feature) - show after selection
+        if check_license_feature(license_mgr, "lightweight_suggestions", show_message=False):
             alt = llm.suggest_lightweight_alternative(selected_package.name, profile)
             if alt:
                 console.print(f"\n[yellow]💡 Lightweight alternative:[/yellow] {alt['name']} - {alt['reason']}")
+        elif can_use_llm:
+            # Show upgrade prompt contextually
+            console.print(f"\n[dim]💡 Want AI-powered lightweight suggestions? Upgrade to Premium![/dim]")
+            console.print(f"[dim]   {license_mgr.get_upgrade_url()} | https://github.com/sponsors/eshu-apps[/dim]")
         
         # Show full description
         console.print(f"\n[bold cyan]Package Details:[/bold cyan]")
@@ -438,6 +454,7 @@ def license_cmd(
             
             if license.tier == "free":
                 console.print(f"\n[yellow]💎 Upgrade to Premium:[/yellow] {license_mgr.get_upgrade_url()}")
+                console.print(f"[cyan]💝 Support Development:[/cyan] https://github.com/sponsors/eshu-apps")
         
         elif action == "activate":
             if not key:
@@ -463,18 +480,21 @@ def license_cmd(
             console.print(f"[cyan]eshu license activate {trial_key}[/cyan]\n")
         
         elif action == "upgrade":
-            console.print(f"\n[bold cyan]Upgrade to ESHU Premium[/bold cyan]\n")
+            console.print(f"\n[bold cyan]💎 Upgrade to ESHU Premium[/bold cyan]\n")
             console.print("Visit: [cyan]https://eshu-installer.com/upgrade[/cyan]")
-            console.print("\n[green]Benefits:[/green]")
+            console.print("\n[green]✨ Premium Benefits:[/green]")
             console.print("  • Unlimited AI queries")
             console.print("  • System snapshots (Time Machine)")
             console.print("  • Smart bloat analyzer")
             console.print("  • Community warnings")
             console.print("  • Adaptive error fixing")
             console.print("  • Priority support")
-            console.print("\n[yellow]Pricing:[/yellow]")
+            console.print("\n[yellow]💰 Pricing:[/yellow]")
             console.print("  • $4.99/month")
             console.print("  • $39.99/year (save 33%)")
+            console.print("\n[cyan]💝 Just want to support? Donate:[/cyan]")
+            console.print("   https://github.com/sponsors/eshu-apps")
+            console.print("   Every contribution helps keep ESHU free!")
         
         else:
             console.print(f"[red]Unknown action: {action}[/red]")

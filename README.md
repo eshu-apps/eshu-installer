@@ -57,6 +57,14 @@ eshu install firefox
 
 ## 🚀 Quick Install
 
+### One-Line Install (Recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash
+```
+
+### Manual Install
+
 ```bash
 # Clone the repository
 git clone https://github.com/eshu-apps/eshu-installer.git
@@ -66,9 +74,9 @@ cd eshu-installer
 ./install-eshu.sh
 ```
 
-That's it! The installer will:
-- ✅ Create a Python virtual environment (no system pollution)
-- ✅ Install all dependencies
+**That's it!** The installer will:
+- ✅ Create an isolated Python virtual environment (no system pollution)
+- ✅ Install all dependencies automatically
 - ✅ Create the `eshu` command in `~/.local/bin`
 - ✅ Test the installation
 
@@ -86,7 +94,12 @@ export PATH="$HOME/.local/bin:$PATH"
 set -gx PATH $HOME/.local/bin $PATH
 ```
 
-Then reload: `source ~/.bashrc` or restart your terminal.
+**Zsh** (`~/.zshrc`):
+```zsh
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Then reload: `source ~/.bashrc` (or restart your terminal).
 
 ---
 
@@ -95,22 +108,25 @@ Then reload: `source ~/.bashrc` or restart your terminal.
 ### Basic Commands
 
 ```bash
-# Search for packages
+# Search for packages across all managers
 eshu search firefox
 
-# Install packages
+# Install packages (auto-selects best manager)
 eshu install hyprland
 
-# View system profile
+# View your system profile
 eshu profile
 
-# Find bloat (Premium)
+# Find bloat and unused packages (Premium)
 eshu cleanup
+
+# Get help
+eshu --help
 ```
 
 ### AI Features (Optional)
 
-**ESHU works perfectly without AI!** But if you want AI-powered package ranking:
+**ESHU works perfectly without AI!** But if you want AI-powered package ranking and natural language queries:
 
 **Option 1: Ollama (FREE, runs locally)**
 ```bash
@@ -178,8 +194,10 @@ ESHU requires Python 3.9+. Check your version:
 python3 --version
 ```
 
-On Arch: `sudo pacman -S python python-pip`
-On Debian/Ubuntu: `sudo apt install python3 python3-pip`
+**Install Python:**
+- Arch: `sudo pacman -S python python-pip`
+- Debian/Ubuntu: `sudo apt install python3 python3-pip python3-venv`
+- Fedora: `sudo dnf install python3 python3-pip`
 
 ### Reinstall
 
@@ -235,6 +253,7 @@ ESHU unifies everything. One command to rule them all.
 - Arch/Manjaro/EndeavourOS ✓
 - Debian/Ubuntu/Pop!_OS ✓
 - Fedora ✓
+- openSUSE ✓
 
 ESHU detects your distro and uses the appropriate package managers automatically.
 
@@ -248,6 +267,10 @@ With AI features:
 - No personal data, no usage tracking
 
 Use Ollama for 100% local AI processing if privacy is critical.
+
+### Why does it need a virtual environment?
+
+Python best practices dictate isolated environments to avoid dependency conflicts. The installer handles this automatically - you just run `eshu` like any other command.
 
 ---
 

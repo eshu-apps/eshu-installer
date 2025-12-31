@@ -23,33 +23,50 @@ MANIFEST
 
 # Virtual environments
 venv/
-env/
 ENV/
+env/
 .venv
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
-Thumbs.db
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
+.mypy_cache/
+.ruff_cache/
 
-# ESHU specific
+# Local development
 *.log
-.eshu_cache/
-test_gumroad_license.py
+.env
+.envrc
 
 # Temporary files
 *.tmp
 *.bak
-*.zip
+*.orig
+/tmp/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Distribution
+*.tar.gz
+*.whl
+
+# Local config
+config.json
+eshu.db
+
+# Cleanup scripts and temporary docs
+cleanup-repo.sh
+FIXES_APPLIED.md
+QUICKSTART.md

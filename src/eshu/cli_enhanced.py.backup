@@ -280,21 +280,20 @@ def search(
 
 @app.command()
 def install(
-    packages: List[str] = typer.Argument(..., help="Package name(s) to install (space-separated)"),
+    query: str = typer.Argument(..., help="Package name or natural language query"),
     yes: bool = typer.Option(False, "--yes", "-y", help="Auto-confirm installation"),
     refresh: bool = typer.Option(False, "--refresh", "-r", help="Refresh system profile cache"),
     manager: Optional[str] = typer.Option(None, "--manager", "-m", help="Prefer specific package manager"),
-    snapshot: bool = typer.Option(False, "--snapshot", help="Create system snapshot before install"),
+    snapshot: bool = typer.Option(True, "--snapshot/--no-snapshot", help="Create system snapshot before install"),
     fast: bool = typer.Option(False, "--fast", "-f", help="Fast mode: skip all AI features for instant results"),
     no_cache: bool = typer.Option(False, "--no-cache", help="Skip cache, force fresh search"),
 ):
-    """Install one or more packages using AI-driven search
+    """Install a package using AI-driven search and installation
 
     Examples:
-        eshu install firefox                    # Install single package
-        eshu install firefox chrome vlc         # Install multiple packages
-        eshu install firefox --fast             # Ultra-fast mode (no AI)
-        eshu install firefox --snapshot         # With snapshot (Premium)
+        eshu install firefox              # Full AI-powered experience
+        eshu install firefox --fast       # Ultra-fast mode (no AI)
+        eshu install firefox --no-cache   # Force fresh search
     """
     
     try:
@@ -433,49 +432,6 @@ def install(
         for manager, status in repo_status.items():
             if not status["configured"] and status["suggestion"]:
                 console.print(f"[yellow]💡 {status['suggestion']}[/yellow]")
-        
-
-        # Handle multiple packages
-        if len(packages) > 1:
-            console.print(f"\n[bold cyan]📦 Installing {len(packages)} packages:[/bold cyan]")
-            for pkg in packages:
-                console.print(f"  • {pkg}")
-            console.print()
-            
-            if not yes and not Confirm.ask(f"\nInstall all {len(packages)} packages?"):
-                console.print("[yellow]Installation cancelled[/yellow]")
-                sys.exit(0)
-            
-            # Install each package
-            success_count = 0
-            failed_packages = []
-            
-            for i, pkg in enumerate(packages, 1):
-                console.print(f"\n[bold cyan]═══ Package {i}/{len(packages)}: {pkg} ═══[/bold cyan]\n")
-                
-                try:
-                    # Recursive call for each package
-                    subprocess.run(
-                        ["eshu", "install", pkg] + (["--yes"] if yes else []) + (["--fast"] if fast else []),
-                        check=True
-                    )
-                    success_count += 1
-                except subprocess.CalledProcessError:
-                    failed_packages.append(pkg)
-                    console.print(f"[red]✗ Failed to install {pkg}[/red]")
-                    if not Confirm.ask("Continue with remaining packages?", default=True):
-                        break
-            
-            # Summary
-            console.print(f"\n[bold cyan]═══ Installation Summary ═══[/bold cyan]")
-            console.print(f"[green]✓ Successful:[/green] {success_count}/{len(packages)}")
-            if failed_packages:
-                console.print(f"[red]✗ Failed:[/red] {', '.join(failed_packages)}")
-            
-            sys.exit(0 if not failed_packages else 1)
-        
-        # Single package installation (original flow)
-        query = packages[0]
         
         # Interpret query (if LLM available)
         if can_use_llm:

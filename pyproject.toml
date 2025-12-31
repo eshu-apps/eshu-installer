@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eshu-installer"
+version = "0.3.0"
+description = "AI-Driven Universal Package Installer for Linux"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "ESHU Team", email = "support@eshu-installer.com"}
+]
+keywords = ["package-manager", "linux", "installer", "ai", "llm", "arch", "debian", "ubuntu"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Developers",
+    "Topic :: System :: Installation/Setup",
+    "Topic :: System :: Software Distribution",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: Console",
+]
+
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "anthropic>=0.18.0",
+    "openai>=1.0.0",
+    "requests>=2.31.0",
+    "psutil>=5.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/eshu-apps/eshu-installer"
+Documentation = "https://github.com/eshu-apps/eshu-installer/blob/main/README.md"
+Repository = "https://github.com/eshu-apps/eshu-installer"
+"Bug Tracker" = "https://github.com/eshu-apps/eshu-installer/issues"
+"Upgrade to Premium" = "https://eshu-apps.gumroad.com/l/eshu-premium"
+
+[project.scripts]
+eshu = "eshu.cli_enhanced:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

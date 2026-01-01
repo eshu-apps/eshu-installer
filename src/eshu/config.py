@@ -27,16 +27,33 @@ class ESHUConfig(BaseModel):
         default=["pacman", "yay", "paru", "apt", "flatpak", "snap", "cargo", "npm", "pip", "aur"],
         description="Priority order for package managers"
     )
-    
+    default_package_manager: Optional[str] = Field(
+        default=None,
+        description="Default/primary package manager for system updates (e.g., 'pacman', 'apt')"
+    )
+
     # System profiler settings
     cache_dir: Path = Field(default=Path.home() / ".cache" / "eshu", description="Cache directory")
     profile_cache_ttl: int = Field(default=3600, description="System profile cache TTL in seconds")
-    
+
+    # Analytics settings (privacy-respecting)
+    analytics_enabled: bool = Field(default=True, description="Enable privacy-respecting analytics")
+    analytics_db_path: Path = Field(
+        default=Path.home() / ".cache" / "eshu" / "analytics.db",
+        description="Analytics database path"
+    )
+
+    # Bundle database settings
+    bundle_db_path: Path = Field(
+        default=Path.home() / ".cache" / "eshu" / "bundles.db",
+        description="Bundle cache database path"
+    )
+
     # Installation preferences
     auto_confirm_deps: bool = Field(default=False, description="Auto-confirm dependency installation")
     prefer_native: bool = Field(default=True, description="Prefer native packages over containerized")
     enable_aur: bool = Field(default=True, description="Enable AUR support on Arch")
-    
+
     # Build settings
     build_dir: Path = Field(default=Path("/tmp/eshu-builds"), description="Temporary build directory")
     parallel_jobs: int = Field(default=0, description="Parallel build jobs (0=auto)")

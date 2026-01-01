@@ -181,17 +181,41 @@ def display_paginated_results(
 
 @app.command()
 def search(
-    query: str = typer.Argument(..., help="Package name to search for"),
+    query: Optional[str] = typer.Argument(None, help="Package name to search for"),
     all_results: bool = typer.Option(False, "--all", "-a", help="Show all results with pagination"),
     manager: Optional[str] = typer.Option(None, "--manager", "-m", help="Search specific manager only"),
 ):
-    """Search for packages across all package managers"""
-    
+    """Search for packages across all package managers
+
+    Examples:
+        eshu search                    # Interactive mode - prompts for search
+        eshu search firefox            # Search for firefox
+        eshu search "web browser"      # Natural language search
+        eshu search firefox --all      # Show all results with pagination
+    """
+
     try:
+        # Interactive mode - prompt for search if not provided
+        if not query:
+            console.print("\n[bold cyan]╔═══════════════════════════════════════════════════════════╗[/bold cyan]")
+            console.print("[bold cyan]║              ESHU - Universal Package Search             ║[/bold cyan]")
+            console.print("[bold cyan]╚═══════════════════════════════════════════════════════════╝[/bold cyan]\n")
+
+            query = Prompt.ask(
+                "[cyan]What package are you looking for?[/cyan]\n[dim]  (Package name or description)[/dim]",
+                default=""
+            )
+
+            if not query or query.strip() == "":
+                console.print("[yellow]No search query provided. Exiting.[/yellow]")
+                sys.exit(0)
+
+            query = query.strip()
+
         config = load_config()
         profiler = SystemProfiler(cache_dir=config.cache_dir)
         profile = profiler.get_profile(cache_ttl=config.profile_cache_ttl)
-        
+
         searcher = PackageSearcher(profile.available_managers, profile.installed_packages)
         
         # Check repository configuration
@@ -280,7 +304,7 @@ def search(
 
 @app.command()
 def install(
-    packages: List[str] = typer.Argument(..., help="Package name(s) to install (space-separated)"),
+    packages: Optional[List[str]] = typer.Argument(None, help="Package name(s) to install (space-separated)"),
     yes: bool = typer.Option(False, "--yes", "-y", help="Auto-confirm installation"),
     refresh: bool = typer.Option(False, "--refresh", "-r", help="Refresh system profile cache"),
     manager: Optional[str] = typer.Option(None, "--manager", "-m", help="Prefer specific package manager"),
@@ -291,13 +315,32 @@ def install(
     """Install one or more packages using AI-driven search
 
     Examples:
+        eshu install                            # Interactive mode - prompts for package
         eshu install firefox                    # Install single package
         eshu install firefox chrome vlc         # Install multiple packages
         eshu install firefox --fast             # Ultra-fast mode (no AI)
         eshu install firefox --snapshot         # With snapshot (Premium)
     """
-    
+
     try:
+        # Interactive mode - prompt for package if not provided
+        if not packages:
+            console.print("\n[bold cyan]╔═══════════════════════════════════════════════════════════╗[/bold cyan]")
+            console.print("[bold cyan]║           ESHU - Universal Package Installer             ║[/bold cyan]")
+            console.print("[bold cyan]╚═══════════════════════════════════════════════════════════╝[/bold cyan]\n")
+
+            package_input = Prompt.ask(
+                "[cyan]What would you like to install?[/cyan]\n[dim]  (Package name, multiple packages, or natural language)[/dim]",
+                default=""
+            )
+
+            if not package_input or package_input.strip() == "":
+                console.print("[yellow]No package specified. Exiting.[/yellow]")
+                sys.exit(0)
+
+            # Split input into packages (handles both space-separated and single packages)
+            packages = package_input.strip().split()
+
         # Load configuration and license
         config = load_config()
         license_mgr = LicenseManager(cache_dir=config.cache_dir)
@@ -317,14 +360,18 @@ def install(
         # Initialize LLM engine for AI features
         llm = LLMEngine(config)
 
+        # Get the primary package query (for Eshu's Path check)
+        primary_package = packages[0]
+
         # Check for Eshu's Path - PREMIUM FEATURE (now with AI!)
         eshu_path_data = None
         if check_license_feature(license_mgr, "eshu_paths", show_message=False):
             # Premium user - use AI-powered bundle suggestion
-            eshu_path_data = suggest_eshu_path_with_llm(query, llm, profile)
+            console.print(f"\n[dim]🤖 AI is analyzing if '{primary_package}' needs companion packages...[/dim]")
+            eshu_path_data = suggest_eshu_path_with_llm(primary_package, llm, profile)
         else:
             # Free user - only show predefined paths as teasers
-            eshu_path_obj = get_eshu_path(query)
+            eshu_path_obj = get_eshu_path(primary_package)
             if eshu_path_obj:
                 eshu_path_data = {
                     "name": eshu_path_obj.name,

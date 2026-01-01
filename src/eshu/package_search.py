@@ -7,6 +7,7 @@ import requests
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from .github_search import search_github_packages
 
 
 @dataclass
@@ -547,10 +548,18 @@ class PackageSearcher:
         
         return results
     
+    def search_github(self, query: str) -> List[PackageResult]:
+        """Search GitHub for relevant repositories"""
+        try:
+            return search_github_packages(query, max_results=3)
+        except Exception as e:
+            # GitHub search is optional, silently fail
+            return []
+
     def search_all(self, query: str) -> List[PackageResult]:
-        """Search all available package managers in parallel"""
+        """Search all available package managers in parallel (including GitHub repos)"""
         all_results = []
-        
+
         search_functions = {
             "pacman": self.search_pacman,
             "yay": self.search_yay,
@@ -561,15 +570,20 @@ class PackageSearcher:
             "cargo": self.search_cargo,
             "npm": self.search_npm,
             "pip": self.search_pip,
+            "github": self.search_github,  # Add GitHub search
         }
         
         # Execute searches in parallel (only for managers with search functions)
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=6) as executor:  # Increased for GitHub
             futures = {}
-            
+
             # Filter to only managers we have search functions for
             searchable_managers = [m for m in self.available_managers if m in search_functions]
-            
+
+            # Always add GitHub search
+            if "github" not in searchable_managers:
+                searchable_managers.append("github")
+
             for manager in searchable_managers:
                 future = executor.submit(search_functions[manager], query)
                 futures[future] = manager

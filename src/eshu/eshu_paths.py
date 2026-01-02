@@ -2,6 +2,7 @@
 
 from typing import Dict, List, Optional
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -223,13 +224,47 @@ def get_eshu_path(package_name: str) -> Optional[EshuPath]:
     return None
 
 
-def suggest_eshu_path_with_llm(package_name: str, llm_engine, system_profile) -> Optional[Dict]:
-    """Use LLM to suggest a curated package bundle (Premium feature)"""
+def suggest_eshu_path_with_llm(package_name: str, llm_engine, system_profile,
+                               bundle_db=None, config=None) -> Optional[Dict]:
+    """Use LLM to suggest a curated package bundle (Premium feature)
 
-    # Check if we have a predefined path first
+    Flow:
+    1. Check bundle database cache
+    2. Check predefined curated paths
+    3. Generate with AI and cache result
+    """
+
+    # Step 1: Check bundle database cache (if available)
+    if bundle_db and config and system_profile:
+        try:
+            cached_bundle = bundle_db.get_bundle(
+                package_name.lower(),
+                system_profile.distro.lower(),
+                system_profile.distro_version
+            )
+
+            if cached_bundle:
+                # Increment usage count
+                bundle_db.increment_usage(
+                    package_name.lower(),
+                    system_profile.distro.lower(),
+                    system_profile.distro_version
+                )
+
+                # Return cached bundle with metadata
+                result = cached_bundle.bundle_data.copy()
+                result["source"] = "cached-ai" if cached_bundle.ai_generated else "cached-curated"
+                result["usage_count"] = cached_bundle.usage_count
+                result["success_rate"] = cached_bundle.success_rate
+                return result
+        except Exception as e:
+            # Silently fail if bundle DB has issues
+            pass
+
+    # Step 2: Check if we have a predefined path
     predefined = get_eshu_path(package_name)
     if predefined:
-        return {
+        bundle_data = {
             "name": predefined.name,
             "description": predefined.description,
             "packages": predefined.packages,
@@ -237,10 +272,38 @@ def suggest_eshu_path_with_llm(package_name: str, llm_engine, system_profile) ->
             "source": "curated"
         }
 
-    # For packages without predefined paths, use AI to suggest intelligently
+        # Cache the predefined bundle for future use
+        if bundle_db and system_profile:
+            try:
+                bundle_db.save_bundle(
+                    package_name.lower(),
+                    system_profile.distro.lower(),
+                    system_profile.distro_version,
+                    bundle_data,
+                    ai_generated=False
+                )
+            except Exception:
+                pass
+
+        return bundle_data
+
+    # Step 3: For packages without predefined paths, use AI
     if llm_engine and system_profile:
         ai_bundle = llm_engine.suggest_intelligent_bundle(package_name, system_profile)
         if ai_bundle:
+            # Cache AI-generated bundle
+            if bundle_db:
+                try:
+                    bundle_db.save_bundle(
+                        package_name.lower(),
+                        system_profile.distro.lower(),
+                        system_profile.distro_version,
+                        ai_bundle,
+                        ai_generated=True
+                    )
+                except Exception:
+                    pass
+
             return ai_bundle
 
     return None

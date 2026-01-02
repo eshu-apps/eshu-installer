@@ -1,13 +1,21 @@
 <div align="center">
 
-# 🚀 ESHU
+```
+██████╗ ███████╗██╗  ██╗██╗   ██╗
+██╔════╝██╔════╝██║  ██║██║   ██║
+█████╗ ███████╗███████║██║   ██║
+██╔══╝ ╚════██║██╔══██║██║   ██║
+███████╗███████║██║  ██║╚██████╔╝
+╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝
+```
 
-### Universal Package Installer for Linux
+# **ESHU**
+### Universal Package Manager for Linux
 
-> **One command for every package. Stop juggling package managers.**
+> **One command for every package. Stop the madness.**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
+[![Version](https://img.shields.io/badge/version-0.4.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
 <a href="https://eshu-apps.gumroad.com/l/eshu-premium"><img src="https://img.shields.io/badge/Premium-$9.99%2Fmonth-gold.svg?style=for-the-badge" alt="Upgrade to Premium"></a>
@@ -16,267 +24,455 @@
 
 ---
 
+## 😭 Stop This Nightmare:
+
+### NVIDIA Driver Hell
+```bash
+# Spent 3 hours on Reddit...
+sudo pacman -S nvidia nvidia-utils
+# Breaks Wayland
+
+sudo apt install nvidia-driver-535
+# Wrong version for your card
+
+yay -S nvidia-dkms
+# Kernel mismatch
+
+# Finally works, then:
+sudo pacman -Syu
+# System won't boot 💀
+```
+
+### AUR/Pacman Confusion
+```bash
+pacman -Ss hyprland
+# Not found
+
+yay -Ss hyprland
+# Found! But which repo?
+
+# Is it aur/hyprland or extra/hyprland?
+# Do I use pacman or yay?
+# What about paru?
+# *existential crisis*
+```
+
+### Fedora Silverblue Hell
+```bash
+# Wait, is this rpm-ostree or dnf?
+rpm-ostree install nvidia-driver
+# Error: can't layer this package
+
+dnf install nvidia-driver
+# Error: read-only filesystem
+
+flatpak install nvidia-driver
+# Error: not available
+
+# 2 hours later, still no NVIDIA drivers 😤
+```
+
+---
+
+## ✨ Do This Instead:
+
+```bash
+eshu install nvidia
+
+🤖 AI analyzing your system...
+✓ Detected: Arch Linux, RTX 3080, Wayland
+
+📦 Installing Complete NVIDIA Setup:
+  • nvidia-dkms (for kernel compatibility)
+  • nvidia-utils (OpenGL/Vulkan)
+  • lib32-nvidia-utils (32-bit support)
+  • nvidia-settings (control panel)
+  • egl-wayland (Wayland support)
+
+✓ All installed! Wayland configured automatically.
+Reboot to activate. ✨
+```
+
+```bash
+eshu install hyprland
+
+🤖 Found cached bundle (234 uses, 96% success rate)
+
+📦 Complete Wayland Desktop Environment:
+  • hyprland (compositor)
+  • waybar (status bar)
+  • wofi (app launcher)
+  • mako (notifications)
+  • grim + slurp (screenshots)
+  • wl-clipboard (clipboard)
+  • All configured to work together!
+
+Install complete bundle? [Y/n] █
+```
+
+**One command. No confusion. No broken systems.** 🚀
+
+---
+
 ## 🎯 What is ESHU?
 
-**ESHU** unifies **all** Linux package managers under a single interface. No more remembering different commands for pacman, apt, yay, flatpak, snap, cargo, npm, and pip.
+**ESHU** unifies **ALL** Linux package managers into one intelligent interface:
 
-### Stop This:
+<div align="center">
 
-```bash
-# Which package manager has firefox?
-apt search firefox
-snap search firefox
-flatpak search firefox
-yay -Ss firefox
-
-# Which one should I use? Which is best?
-# Let me check Reddit... *30 minutes later*
+```
+┌─────────────────────────────────────────────┐
+│           📦 ESHU UNIVERSAL API             │
+├─────────────────────────────────────────────┤
+│  One command searches:                      │
+│  • pacman   • yay      • paru    • apt      │
+│  • flatpak  • snap     • cargo   • npm      │
+│  • pip      • GitHub repos (NEW!)           │
+│                                             │
+│  🤖 AI ranks results for YOUR system       │
+│  📦 Suggests complete package bundles       │
+│  🔧 Auto-fixes errors during installation   │
+│  📊 Learns from your usage patterns         │
+└─────────────────────────────────────────────┘
 ```
 
-### Do This Instead:
+</div>
 
+**Works on:** Arch • Debian • Ubuntu • Fedora • Any Linux with Python 3.9+
+
+---
+
+## ⚡ Features
+
+### 🔍 **Universal Search**
+- Search 9+ package managers + GitHub repos simultaneously
+- AI ranks results based on your hardware and distro
+- Shows which packages are already installed
+- See size, version, and repo info instantly
+
+### 📦 **Eshu's Path - Smart Bundles** *(Premium)*
+- AI generates complete package setups
+- Cached locally for instant reuse
+- Community-driven knowledge base
+- **Example:** Install Hyprland → get entire Wayland ecosystem (15 packages)
+
+### 🤖 **AI-Powered Intelligence** *(Optional)*
+- Natural language queries: "install a video editor"
+- Automatic error diagnosis and fixes
+- Hardware compatibility warnings
+- Suggests lightweight alternatives on low-RAM systems
+
+### 🔧 **System Maintenance** *(Premium)*
 ```bash
-eshu install firefox
-# ✓ Searches across ALL package managers
-# ✓ Shows best option for your system
-# ✓ One command. Done.
+eshu maintain
+
+🔄 Updating: pacman, yay, flatpak, npm, pip...
+✓ 23 packages updated
+
+🧹 Cleaning caches and orphans...
+✓ 680MB disk space freed
+
+System is healthy! ✨
+```
+**One command updates EVERYTHING.** No more update scripts!
+
+### 📊 **Usage Analytics** *(Privacy-Respecting)*
+- Track which package managers you use most
+- See your most-searched packages
+- Monitor install success rates
+- **Zero PII collected** - completely anonymous
+
+### 💬 **Interactive Mode**
+```bash
+eshu install
+
+╔═══════════════════════════════════════╗
+║  ESHU - Universal Package Installer   ║
+╚═══════════════════════════════════════╝
+
+What would you like to install?
+> nvidia drivers for gaming
+
+🤖 AI understanding query...
+📦 Found NVIDIA gaming setup bundle...
 ```
 
 ---
 
-## ✨ Features
-
-- 🔍 **Universal Search** - Search across pacman, yay, apt, flatpak, snap, cargo, npm, pip simultaneously
-- ⚡ **Smart Installation** - Automatically picks the best package manager for your system
-- 🤖 **AI-Powered** (Optional) - Natural language queries and intelligent recommendations
-- 📦 **Eshu's Path** (Premium) - Curated package bundles for complete setups
-- 📸 **Time Machine** (Premium) - Automatic snapshots before installations
-- 🧹 **Smart Cleanup** (Premium) - Find and remove bloat
-
----
-
-## 🚀 Quick Install
+## 🚀 Installation
 
 ### One-Line Install (Recommended)
-
 ```bash
 curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash
 ```
 
 ### Manual Install
-
 ```bash
-# Clone the repository
 git clone https://github.com/eshu-apps/eshu-installer.git
 cd eshu-installer
-
-# Run the installer (handles everything automatically)
 ./install-eshu.sh
 ```
 
-**That's it!** The installer will:
-- ✅ Create an isolated Python virtual environment (no system pollution)
-- ✅ Install all dependencies automatically
-- ✅ Create the `eshu` command in `~/.local/bin`
-- ✅ Test the installation
-
-### Add to PATH (if needed)
-
-If `~/.local/bin` isn't in your PATH, add this to your shell config:
-
-**Bash** (`~/.bashrc`):
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-**Fish** (`~/.config/fish/config.fish`):
-```fish
-set -gx PATH $HOME/.local/bin $PATH
-```
-
-**Zsh** (`~/.zshrc`):
-```zsh
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-Then reload: `source ~/.bashrc` (or restart your terminal).
+**That's it!** The installer:
+- ✅ Creates isolated Python environment (no system pollution)
+- ✅ Installs dependencies automatically
+- ✅ Creates `eshu` command in `~/.local/bin`
+- ✅ Runs setup wizard
 
 ---
 
-## 💻 Usage
-
-### Basic Commands
+## 💻 Quick Start
 
 ```bash
-# Search for packages across all managers
+# Search for packages
 eshu search firefox
 
-# Install packages (auto-selects best manager)
-eshu install hyprland
+# Install packages (single or multiple)
+eshu install firefox
+eshu install firefox chrome vlc
 
-# View your system profile
-eshu profile
+# Interactive mode (no arguments)
+eshu install
+eshu search
 
-# Find bloat and unused packages (Premium)
-eshu cleanup
+# System maintenance (Premium)
+eshu maintain
 
-# Get help
-eshu --help
+# View your usage stats
+eshu stats
 ```
 
-### AI Features (Optional)
+### Add AI Features (Optional)
 
-**ESHU works perfectly without AI!** But if you want AI-powered package ranking and natural language queries:
+**ESHU works great without AI!** But for intelligent bundles and error handling:
 
-**Option 1: Ollama (FREE, runs locally)**
 ```bash
+# Option 1: Ollama (FREE, runs locally)
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull llama3.1:8b
 eshu config set-provider ollama
-```
 
-**Option 2: Anthropic Claude (best results, paid API)**
-```bash
-export ANTHROPIC_API_KEY="your-api-key"
+# Option 2: Anthropic Claude (best results, paid API)
+export ANTHROPIC_API_KEY="your-key"
 eshu config set-provider anthropic
 ```
+
+**Free tier:** 10 AI queries/day
+**Premium:** Unlimited AI + bundles + maintenance → [$9.99/month](https://eshu-apps.gumroad.com/l/eshu-premium)
 
 ---
 
 ## 📦 Supported Package Managers
 
-| Manager  | Search | Install | Notes |
-|----------|--------|---------|-------|
-| pacman   | ✅     | ✅      | Arch Linux official repos |
-| yay      | ✅     | ✅      | AUR helper |
-| paru     | ✅     | ✅      | AUR helper |
-| apt      | ✅     | ✅      | Debian/Ubuntu |
-| flatpak  | ✅     | ✅      | Universal apps |
-| snap     | ✅     | ✅      | Universal apps |
-| cargo    | ✅     | ✅      | Rust packages |
-| npm      | ✅     | ✅      | Node.js packages |
-| pip      | ✅     | ✅      | Python packages |
+| Manager | Search | Install | Update | Notes |
+|---------|--------|---------|--------|-------|
+| pacman | ✅ | ✅ | ✅ | Arch official repos |
+| yay | ✅ | ✅ | ✅ | AUR helper |
+| paru | ✅ | ✅ | ✅ | AUR helper |
+| apt | ✅ | ✅ | ✅ | Debian/Ubuntu |
+| flatpak | ✅ | ✅ | ✅ | Universal apps |
+| snap | ✅ | ✅ | ✅ | Universal apps |
+| cargo | ✅ | ✅ | ✅ | Rust packages |
+| npm | ✅ | ✅ | ✅ | Node.js packages |
+| pip | ✅ | ✅ | ✅ | Python packages |
+| **GitHub** | ✅ | 🚧 | - | **NEW!** Repos with releases |
 
 ---
 
 ## 💎 Free vs Premium
 
-### Free Tier
-- ✅ Multi-manager package search
-- ✅ Basic installation
-- ✅ System profiling
-- ✅ 10 AI queries/day
-- ✅ All package managers
+<div align="center">
 
-### Premium ($9.99/month)
-- ✅ **Everything in Free**
-- ✅ **📦 Eshu's Path** - Curated package bundles
-- ✅ Unlimited AI queries
-- ✅ Automatic snapshots & rollback
-- ✅ Community hardware warnings
-- ✅ Smart bloat finder
-- ✅ Priority support
+| Feature | Free | Premium |
+|---------|------|---------|
+| Multi-manager search | ✅ | ✅ |
+| GitHub repo search | ✅ | ✅ |
+| Basic installation | ✅ | ✅ |
+| AI queries/day | 10 | ∞ |
+| **Eshu's Path Bundles** | Teasers | ✅ |
+| **System Maintenance** | ❌ | ✅ |
+| **Auto Snapshots** | ❌ | ✅ |
+| **Community Warnings** | ❌ | ✅ |
+| **Cloud Bundle Sync** | ❌ | ✅ |
+| **Priority Support** | ❌ | ✅ |
 
-[**Upgrade to Premium →**](https://eshu-apps.gumroad.com/l/eshu-premium)
+[**🚀 Upgrade to Premium**](https://eshu-apps.gumroad.com/l/eshu-premium) | [💝 Donate](https://github.com/sponsors/eshu-apps)
 
----
-
-## 🔧 Troubleshooting
-
-### Command not found
-
-Make sure `~/.local/bin` is in your PATH (see installation instructions above).
-
-### Python version issues
-
-ESHU requires Python 3.9+. Check your version:
-```bash
-python3 --version
-```
-
-**Install Python:**
-- Arch: `sudo pacman -S python python-pip`
-- Debian/Ubuntu: `sudo apt install python3 python3-pip python3-venv`
-- Fedora: `sudo dnf install python3 python3-pip`
-
-### Reinstall
-
-```bash
-cd eshu-installer
-./install-eshu.sh
-# Choose 'y' when asked to reinstall
-```
-
-### Uninstall
-
-```bash
-rm -rf ~/.local/share/eshu
-rm ~/.local/bin/eshu
-```
+</div>
 
 ---
 
-## 📚 Documentation
+## 🎯 Real-World Examples
 
-- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Command cheat sheet
-- **[Architecture](docs/ARCHITECTURE.md)** - How ESHU works
-- **[Contributing](docs/CONTRIBUTING.md)** - Help improve ESHU
+### Example 1: Install Complete Hyprland Setup
+
+```bash
+$ eshu install hyprland
+
+🤖 Checking bundle cache...
+✓ Found cached bundle (used 234 times, 96% success rate)
+
+📦 Eshu's Path: Complete Hyprland Setup
+
+Includes 15 packages:
+  • hyprland (Wayland compositor)
+  • waybar (status bar)
+  • wofi (app launcher)
+  • mako (notifications)
+  • grim, slurp (screenshots)
+  • wl-clipboard (clipboard utilities)
+  • swaylock, swayidle (screen locking)
+  • pipewire, wireplumber (audio)
+  • brightnessctl (brightness control)
+
+Install complete bundle? [Y/n] y
+
+✓ All 15 packages installed successfully!
+✓ Hyprland is ready to use!
+```
+
+### Example 2: Fix NVIDIA on Arch
+
+```bash
+$ eshu install nvidia
+
+🤖 AI analyzing system...
+  • Detected: Arch Linux (rolling)
+  • GPU: NVIDIA RTX 3080
+  • Kernel: 6.6.7-arch1-1
+  • Display: Wayland
+
+⚠️  Community Warning:
+   NVIDIA + Wayland on kernel 6.6 may have flickering.
+   Workaround available.
+
+📦 Complete NVIDIA Setup Bundle:
+  • nvidia-dkms (kernel-independent)
+  • nvidia-utils, lib32-nvidia-utils
+  • nvidia-settings
+  • egl-wayland (Wayland support)
+
+Apply flickering workaround? [Y/n] y
+
+✓ NVIDIA drivers installed
+✓ Wayland configured
+✓ Workaround applied
+
+Reboot to activate. Run 'nvidia-smi' to verify.
+```
+
+### Example 3: System Maintenance (Premium)
+
+```bash
+$ eshu maintain
+
+🔧 ESHU System Maintenance
+
+🔄 Updating package managers...
+  ✓ pacman: 18 packages updated
+  ✓ yay: 5 AUR packages updated
+  ✓ flatpak: 3 apps updated
+  ✓ npm: 2 global packages updated
+
+🧹 Cleaning caches and orphans...
+  ✓ pacman: Removed 520MB cache
+  ✓ apt: Removed 2 orphaned packages
+  ✓ flatpak: Removed 3 unused runtimes
+
+📊 Summary:
+  28 packages updated
+  680MB disk space freed
+  0 errors
+
+✓ System is healthy! ✨
+```
 
 ---
 
 ## ❓ FAQ
 
-### Why not just learn the package managers?
+### "Why not just use [package manager]?"
 
-**Time.** Learning all package managers takes weeks. ESHU works in 5 minutes.
+Because **you use multiple package managers**, whether you know it or not:
 
-Plus, even experts forget syntax:
-- Is it `apt search` or `apt-cache search`?
-- `pacman -Ss` or `pacman -S`?
-- `yay -S` or `yay -Ss`?
+- System packages (pacman/apt)
+- AUR (yay/paru)
+- Flatpaks for GUI apps
+- npm for Node tools
+- pip for Python tools
+- cargo for Rust tools
 
-ESHU unifies everything. One command to rule them all.
+ESHU unifies them all. **One search. One install. Done.**
 
-### How is this different from Nix?
+### "How is this different from Nix/Guix?"
 
-**Nix** is a whole ecosystem requiring you to adopt Nix package management.
+**Nix/Guix** replace your entire package management system.
 
-**ESHU** works with your **existing** setup:
-- ✓ Uses pacman/apt/yay you already have
-- ✓ No system rewrites
-- ✓ Just a thin layer on top
-- ✓ Install it, use it, done
+**ESHU** works **with** your existing setup:
+- ✅ Uses the package managers you already have
+- ✅ No system rewrites required
+- ✅ Install it, use it, done
+- ✅ Can be removed without breaking anything
 
-### Does this work on Debian/Ubuntu?
+Think of ESHU as a "universal remote" for package managers.
 
-**Yes!** ESHU works on **any** Linux distro with Python 3.9+:
-- Arch/Manjaro/EndeavourOS ✓
-- Debian/Ubuntu/Pop!_OS ✓
-- Fedora ✓
-- openSUSE ✓
+### "What about security/privacy?"
 
-ESHU detects your distro and uses the appropriate package managers automatically.
+**Analytics:**
+- Completely opt-in (enabled by default, easily disabled)
+- **Zero personal data** collected (no names, emails, IPs)
+- Only tracks package names, managers used, error types
+- Stored locally first, cloud sync optional (Premium)
+- Disable: `eshu config set analytics_enabled false`
 
-### What data is collected?
+**AI Features:**
+- Queries sent to your chosen provider (Anthropic/OpenAI/Ollama)
+- Only package names and error messages sent
+- Use Ollama for 100% local processing
 
-**Zero.** ESHU is fully offline. No telemetry, no analytics, no phone-home.
+**Code:**
+- Fully open source (MIT license)
+- No telemetry or phone-home
+- No tracking pixels or analytics scripts
 
-With AI features:
-- LLM queries are sent to the API you choose (Anthropic/OpenAI/Ollama)
-- Only package names and error messages are sent
-- No personal data, no usage tracking
+---
 
-Use Ollama for 100% local AI processing if privacy is critical.
+## 🗺️ Roadmap
 
-### Why does it need a virtual environment?
+### v0.4.0 (Current)
+- [x] Bundle database and caching
+- [x] Usage analytics (privacy-respecting)
+- [x] System maintenance command
+- [x] GitHub repo search
+- [x] Interactive CLI mode
 
-Python best practices dictate isolated environments to avoid dependency conflicts. The installer handles this automatically - you just run `eshu` like any other command.
+### v0.5.0 (Next - Q1 2025)
+- [ ] Cloud bundle sync (Premium)
+- [ ] Bundle marketplace
+- [ ] Smart install source switching
+- [ ] Auto-build assistance for GitHub repos
+- [ ] GUI interface (Electron or Tauri)
+
+### v1.0.0 (Q2 2025)
+- [ ] Plugin system
+- [ ] Custom bundle creation
+- [ ] Multi-machine sync
+- [ ] Enterprise features
+- [ ] Production-ready stability
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+Contributions welcome! Areas for improvement:
+
+- Additional package manager support
+- More curated Eshu's Path bundles
+- Better error handling
+- GUI interface
+- Documentation improvements
+
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ---
 
@@ -292,13 +488,29 @@ Built with:
 - [Anthropic Claude](https://anthropic.com) - AI intelligence
 - [Typer](https://typer.tiangolo.com/) - CLI framework
 - [Rich](https://rich.readthedocs.io/) - Terminal formatting
+- [Pydantic](https://pydantic.dev/) - Configuration management
+
+---
+
+## 📚 Documentation
+
+- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Command cheat sheet
+- **[Advanced Features](ADVANCED_FEATURES.md)** - Deep dive into v0.4.0 features
+- **[Privacy Policy](PRIVACY.md)** - What we collect (and don't)
+- **[Architecture](ARCHITECTURE.md)** - How ESHU works
 
 ---
 
 <div align="center">
 
-**ESHU** - One command for every package. 🚀
+**ESHU v0.4.0** - One command for every package. 🚀
 
-[GitHub](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshu-apps.gumroad.com/l/eshu-premium) • [Docs](docs/)
+**Stop juggling package managers. Start using ESHU.**
+
+[Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshu-apps.gumroad.com/l/eshu-premium) • [Docs](docs/)
+
+---
+
+*Made with ❤️ for the Linux community*
 
 </div>

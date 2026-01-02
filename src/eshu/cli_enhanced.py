@@ -21,6 +21,8 @@ from .installer import PackageInstaller
 from .license_manager import LicenseManager, License
 from .eshu_paths import get_eshu_path, suggest_eshu_path_with_llm, ESHU_PATHS
 from .cache import SimpleCache
+from .bundle_database import BundleDatabase
+from .analytics import Analytics
 
 app = typer.Typer(
     name="eshu",
@@ -360,15 +362,28 @@ def install(
         # Initialize LLM engine for AI features
         llm = LLMEngine(config)
 
+        # Initialize bundle database for caching
+        bundle_db = BundleDatabase(config.bundle_db_path)
+
+        # Initialize analytics (privacy-respecting)
+        analytics = Analytics(config.analytics_db_path, enabled=config.analytics_enabled)
+
         # Get the primary package query (for Eshu's Path check)
         primary_package = packages[0]
+
+        # Track search in analytics
+        analytics.track_search(primary_package)
 
         # Check for Eshu's Path - PREMIUM FEATURE (now with AI!)
         eshu_path_data = None
         if check_license_feature(license_mgr, "eshu_paths", show_message=False):
-            # Premium user - use AI-powered bundle suggestion
-            console.print(f"\n[dim]🤖 AI is analyzing if '{primary_package}' needs companion packages...[/dim]")
-            eshu_path_data = suggest_eshu_path_with_llm(primary_package, llm, profile)
+            # Premium user - use AI-powered bundle suggestion with caching
+            console.print(f"\n[dim]🤖 AI is checking bundle cache and analyzing '{primary_package}'...[/dim]")
+            eshu_path_data = suggest_eshu_path_with_llm(
+                primary_package, llm, profile,
+                bundle_db=bundle_db,
+                config=config
+            )
         else:
             # Free user - only show predefined paths as teasers
             eshu_path_obj = get_eshu_path(primary_package)
@@ -835,6 +850,184 @@ def setup():
     console.print("  eshu profile")
     console.print("  eshu license-cmd status")
     console.print("\n[dim]Run 'eshu --help' for full command list[/dim]\n")
+
+
+@app.command()
+def maintain(
+    update_only: bool = typer.Option(False, "--update", help="Only update packages"),
+    clean_only: bool = typer.Option(False, "--clean", help="Only clean caches"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be done"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Minimal output"),
+):
+    """Update and clean ALL package managers (Premium)
+
+    Examples:
+        eshu maintain              # Update and clean everything
+        eshu maintain --update     # Only update packages
+        eshu maintain --clean      # Only clean caches
+        eshu maintain --dry-run    # Preview changes
+    """
+    try:
+        config = load_config()
+        license_mgr = LicenseManager(cache_dir=config.cache_dir)
+
+        # Check premium feature
+        if not check_license_feature(license_mgr, "eshu_paths"):  # Using eshu_paths as premium marker
+            return
+
+        profiler = SystemProfiler(cache_dir=config.cache_dir)
+        profile = profiler.get_profile(cache_ttl=config.profile_cache_ttl)
+
+        from .maintenance import SystemMaintainer, display_maintenance_results
+
+        maintainer = SystemMaintainer(profile.available_managers)
+
+        if not quiet:
+            console.print("\n[bold cyan]🔧 ESHU System Maintenance[/bold cyan]\n")
+
+        update_results = {}
+        clean_results = {}
+
+        # Update phase
+        if not clean_only:
+            if not quiet:
+                console.print("[bold]🔄 Updating package managers...[/bold]\n")
+
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                console=console
+            ) as progress:
+                task = progress.add_task("Updating all package managers...", total=None)
+                update_results = maintainer.update_all()
+                progress.update(task, completed=True)
+
+        # Clean phase
+        if not update_only:
+            if not quiet:
+                console.print("\n[bold]🧹 Cleaning caches and orphans...[/bold]\n")
+
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                console=console
+            ) as progress:
+                task = progress.add_task("Cleaning package managers...", total=None)
+                clean_results = maintainer.clean_all()
+                progress.update(task, completed=True)
+
+        # Display results
+        if not quiet:
+            display_maintenance_results(update_results, clean_results)
+
+        console.print("\n[green]✓ System maintenance complete![/green]\n")
+
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Maintenance cancelled by user.[/yellow]")
+        sys.exit(1)
+    except Exception as e:
+        console.print(f"\n[red]Error during maintenance: {e}[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def stats(
+    export: bool = typer.Option(False, "--export", help="Export analytics data to JSON"),
+    clear: bool = typer.Option(False, "--clear", help="Clear all analytics data"),
+):
+    """View ESHU usage statistics and analytics
+
+    Examples:
+        eshu stats                 # View statistics
+        eshu stats --export        # Export to JSON
+        eshu stats --clear         # Clear all data
+    """
+    try:
+        config = load_config()
+
+        if not config.analytics_enabled:
+            console.print("\n[yellow]Analytics are currently disabled.[/yellow]")
+            console.print("[dim]Enable with: eshu config set analytics_enabled true[/dim]\n")
+            return
+
+        analytics = Analytics(config.analytics_db_path, enabled=True)
+
+        if clear:
+            if Confirm.ask("\n[yellow]Clear all analytics data?[/yellow]"):
+                config.analytics_db_path.unlink(missing_ok=True)
+                console.print("[green]✓ Analytics data cleared[/green]\n")
+            return
+
+        if export:
+            import json
+            from datetime import datetime
+
+            data = analytics.export_aggregated_data()
+            filename = f"eshu-analytics-{datetime.now().strftime('%Y%m%d')}.json"
+
+            with open(filename, 'w') as f:
+                json.dump(data, f, indent=2)
+
+            console.print(f"\n[green]✓ Analytics exported to {filename}[/green]\n")
+            return
+
+        # Display stats
+        console.print("\n[bold cyan]📊 ESHU Usage Statistics[/bold cyan]\n")
+
+        summary = analytics.get_summary_stats()
+
+        # Summary table
+        summary_table = Table(show_header=False, box=None)
+        summary_table.add_column("Metric", style="cyan")
+        summary_table.add_column("Value", style="green")
+
+        summary_table.add_row("Total Searches", str(summary.get("total_searches", 0)))
+        summary_table.add_row("Total Installations", str(summary.get("total_installations", 0)))
+        summary_table.add_row("Success Rate", f"{summary.get('overall_success_rate', 0):.1f}%")
+        summary_table.add_row("Total Errors", str(summary.get("total_errors", 0)))
+        summary_table.add_row("Error Recovery Rate", f"{summary.get('error_recovery_rate', 0):.1f}%")
+
+        console.print(summary_table)
+
+        # Popular searches
+        console.print("\n[bold]🔍 Most Searched Packages (Last 30 Days)[/bold]\n")
+        popular = analytics.get_popular_searches(limit=10)
+
+        if popular:
+            for i, (package, count) in enumerate(popular, 1):
+                console.print(f"  {i}. [cyan]{package}[/cyan] ({count} searches)")
+        else:
+            console.print("[dim]No search data yet[/dim]")
+
+        # Package manager stats
+        console.print("\n[bold]📦 Package Manager Performance[/bold]\n")
+        manager_stats = analytics.get_manager_stats()
+
+        if manager_stats:
+            mgr_table = Table(show_header=True, header_style="bold magenta")
+            mgr_table.add_column("Manager", style="cyan")
+            mgr_table.add_column("Uses", style="yellow")
+            mgr_table.add_column("Success Rate", style="green")
+            mgr_table.add_column("Avg Duration", style="blue")
+
+            for mgr, stats in manager_stats.items():
+                mgr_table.add_row(
+                    mgr,
+                    str(stats['total_uses']),
+                    f"{stats['success_rate']:.1f}%",
+                    f"{stats['avg_duration']:.1f}s"
+                )
+
+            console.print(mgr_table)
+        else:
+            console.print("[dim]No installation data yet[/dim]")
+
+        console.print("\n[dim]Privacy: No personal data is collected. All data stored locally.[/dim]")
+        console.print("[dim]Disable analytics: eshu config set analytics_enabled false[/dim]\n")
+
+    except Exception as e:
+        console.print(f"\n[red]Error displaying stats: {e}[/red]")
+        sys.exit(1)
 
 
 # Import remaining commands from original CLI

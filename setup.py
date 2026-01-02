@@ -19,7 +19,7 @@ if requirements_file.exists():
 
 setup(
     name="eshu-installer",
-    version="0.3.0",
+    version="0.4.0",
     author="ESHU Team",
     author_email="support@eshu-installer.com",
     description="AI-Driven Universal Package Installer for Linux",

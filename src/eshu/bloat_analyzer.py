@@ -23,7 +23,9 @@ class BloatPackage:
 class BloatAnalyzer:
     """Analyzes system for unused packages and bloat"""
     
-    def __init__(self, cache_dir: Path = Path("/var/cache/eshu")):
+    def __init__(self, cache_dir: Path = None):
+        if cache_dir is None:
+            cache_dir = Path.home() / ".cache" / "eshu"
         self.cache_dir = cache_dir
         self.usage_file = cache_dir / "package_usage.json"
     

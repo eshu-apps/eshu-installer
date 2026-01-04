@@ -1,9 +1,11 @@
 """GitHub repository search for finding packages"""
 
 import requests
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from dataclasses import dataclass
-from .package_search import PackageResult
+
+if TYPE_CHECKING:
+    from .package_search import PackageResult
 
 
 @dataclass
@@ -30,7 +32,7 @@ class GitHubSearcher:
         })
         self.api_base = "https://api.github.com"
 
-    def search_repos(self, query: str, max_results: int = 5) -> List[PackageResult]:
+    def search_repos(self, query: str, max_results: int = 5) -> List["PackageResult"]:
         """
         Search GitHub for repositories matching the query
 
@@ -106,8 +108,9 @@ class GitHubSearcher:
 
         return False
 
-    def _convert_to_package_result(self, repo_data: dict) -> Optional[PackageResult]:
+    def _convert_to_package_result(self, repo_data: dict) -> Optional["PackageResult"]:
         """Convert GitHub repo data to PackageResult"""
+        from .package_search import PackageResult
 
         try:
             # Determine likely installation method based on language
@@ -153,7 +156,7 @@ class GitHubSearcher:
         return language_to_manager.get(language, 'git')
 
 
-def search_github_packages(query: str, max_results: int = 5) -> List[PackageResult]:
+def search_github_packages(query: str, max_results: int = 5) -> List["PackageResult"]:
     """
     Convenience function to search GitHub for packages
 

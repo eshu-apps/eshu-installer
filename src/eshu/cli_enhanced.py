@@ -183,36 +183,40 @@ def display_paginated_results(
 
 @app.command()
 def search(
-    query: Optional[str] = typer.Argument(None, help="Package name to search for"),
+    queries: Optional[List[str]] = typer.Argument(None, help="Package name(s) to search for"),
     all_results: bool = typer.Option(False, "--all", "-a", help="Show all results with pagination"),
     manager: Optional[str] = typer.Option(None, "--manager", "-m", help="Search specific manager only"),
 ):
     """Search for packages across all package managers
 
     Examples:
-        eshu search                    # Interactive mode - prompts for search
-        eshu search firefox            # Search for firefox
-        eshu search "web browser"      # Natural language search
-        eshu search firefox --all      # Show all results with pagination
+        eshu search                         # Interactive mode - prompts for search
+        eshu search firefox                 # Search for firefox
+        eshu search firefox chrome vim      # Search for multiple packages
+        eshu search web browser             # Multi-word search (no quotes needed)
+        eshu search firefox --all           # Show all results with pagination
     """
 
     try:
         # Interactive mode - prompt for search if not provided
-        if not query:
+        if not queries:
             console.print("\n[bold cyan]╔═══════════════════════════════════════════════════════════╗[/bold cyan]")
             console.print("[bold cyan]║              ESHU - Universal Package Search             ║[/bold cyan]")
             console.print("[bold cyan]╚═══════════════════════════════════════════════════════════╝[/bold cyan]\n")
 
-            query = Prompt.ask(
-                "[cyan]What package are you looking for?[/cyan]\n[dim]  (Package name or description)[/dim]",
+            query_input = Prompt.ask(
+                "[cyan]What package(s) are you looking for?[/cyan]\n[dim]  (Package names or keywords, space-separated)[/dim]",
                 default=""
             )
 
-            if not query or query.strip() == "":
+            if not query_input or query_input.strip() == "":
                 console.print("[yellow]No search query provided. Exiting.[/yellow]")
                 sys.exit(0)
 
-            query = query.strip()
+            queries = query_input.strip().split()
+
+        # Join all queries into one search string for broad matching
+        query = " ".join(queries)
 
         config = load_config()
         profiler = SystemProfiler(cache_dir=config.cache_dir)
@@ -222,7 +226,14 @@ def search(
 
         # Skip repository check during search for speed
         # (Can be checked separately with 'eshu doctor' command if needed)
-        
+
+        # Show nice header for multi-package search
+        if len(queries) > 1:
+            console.print(f"\n[bold cyan]Searching for {len(queries)} packages:[/bold cyan]")
+            for i, q in enumerate(queries, 1):
+                console.print(f"  [dim]{i}.[/dim] [cyan]{q}[/cyan]")
+            console.print()
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -364,6 +375,13 @@ def install(
 
         # Initialize analytics (privacy-respecting)
         analytics = Analytics(config.analytics_db_path, enabled=config.analytics_enabled)
+
+        # Show nice header for multi-package install
+        if len(packages) > 1:
+            console.print(f"\n[bold cyan]Installing {len(packages)} packages:[/bold cyan]")
+            for i, pkg in enumerate(packages, 1):
+                console.print(f"  [dim]{i}.[/dim] [cyan]{pkg}[/cyan]")
+            console.print()
 
         # Get the primary package query (for Eshu's Path check)
         primary_package = packages[0]

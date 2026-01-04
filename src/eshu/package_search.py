@@ -591,10 +591,11 @@ class PackageSearcher:
             for future in as_completed(futures):
                 manager = futures[future]
                 try:
-                    results = future.result(timeout=8)
+                    results = future.result(timeout=5)
                     all_results.extend(results)
                 except Exception as e:
-                    print(f"Error in {manager} search: {e}")
+                    # Silently skip failed searches (don't clutter output)
+                    pass
         
         return all_results
     
@@ -668,7 +669,7 @@ class PackageSearcher:
                     ["flatpak", "remotes"],
                     capture_output=True,
                     text=True,
-                    timeout=10,
+                    timeout=3,
                     check=False
                 )
                 has_flathub = "flathub" in result.stdout.lower()

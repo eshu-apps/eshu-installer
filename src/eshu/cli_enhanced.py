@@ -219,12 +219,9 @@ def search(
         profile = profiler.get_profile(cache_ttl=config.profile_cache_ttl)
 
         searcher = PackageSearcher(profile.available_managers, profile.installed_packages)
-        
-        # Check repository configuration
-        repo_status = searcher.check_repositories()
-        for manager_name, status in repo_status.items():
-            if not status["configured"] and status["suggestion"]:
-                console.print(f"[yellow]💡 {status['suggestion']}[/yellow]")
+
+        # Skip repository check during search for speed
+        # (Can be checked separately with 'eshu doctor' command if needed)
         
         with Progress(
             SpinnerColumn(),

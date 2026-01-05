@@ -1,15 +1,7 @@
 <div align="center">
 
-```
-██████╗ ███████╗██╗  ██╗██╗   ██╗
-██╔════╝██╔════╝██║  ██║██║   ██║
-█████╗ ███████╗███████║██║   ██║
-██╔══╝ ╚════██║██╔══██║██║   ██║
-███████╗███████║██║  ██║╚██████╔╝
-╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝
-```
+<img src="assets/horizontal.png" alt="ESHU - Universal Package Manager for Linux" width="800">
 
-# **ESHU**
 ### Universal Package Manager for Linux
 
 > **One command for every package. Stop the madness.**
@@ -24,7 +16,77 @@
 
 ---
 
-## 😭 Stop This Nightmare:
+## 😭 The Problem: Package Manager Hell
+
+> **These are the nightmares we're replacing with ESHU** ⬇️
+
+<details>
+<summary><b>❌ NVIDIA Driver Hell</b> (click to expand horror story)</summary>
+
+<br>
+
+```bash
+# Spent 3 hours on Reddit...
+sudo pacman -S nvidia nvidia-utils
+# Breaks Wayland
+
+sudo apt install nvidia-driver-535
+# Wrong version for your card
+
+yay -S nvidia-dkms
+# Kernel mismatch
+
+# Finally works, then:
+sudo pacman -Syu
+# System won't boot 💀
+```
+
+</details>
+
+<details>
+<summary><b>❌ AUR/Pacman Confusion</b></summary>
+
+<br>
+
+```bash
+pacman -Ss hyprland
+# Not found
+
+yay -Ss hyprland
+# Found! But which repo?
+
+# Is it aur/hyprland or extra/hyprland?
+# Do I use pacman or yay?
+# What about paru?
+# *existential crisis*
+```
+
+</details>
+
+<details>
+<summary><b>❌ Fedora Silverblue Hell</b></summary>
+
+<br>
+
+```bash
+# Wait, is this rpm-ostree or dnf?
+rpm-ostree install nvidia-driver
+# Error: can't layer this package
+
+dnf install nvidia-driver
+# Error: read-only filesystem
+
+flatpak install nvidia-driver
+# Error: not available
+
+# 2 hours later, still no NVIDIA drivers 😤
+```
+
+</details>
+
+---
+
+## ✨ The Solution: ESHU
 
 ### NVIDIA Driver Hell
 ```bash
@@ -43,38 +105,6 @@ sudo pacman -Syu
 # System won't boot 💀
 ```
 
-### AUR/Pacman Confusion
-```bash
-pacman -Ss hyprland
-# Not found
-
-yay -Ss hyprland
-# Found! But which repo?
-
-# Is it aur/hyprland or extra/hyprland?
-# Do I use pacman or yay?
-# What about paru?
-# *existential crisis*
-```
-
-### Fedora Silverblue Hell
-```bash
-# Wait, is this rpm-ostree or dnf?
-rpm-ostree install nvidia-driver
-# Error: can't layer this package
-
-dnf install nvidia-driver
-# Error: read-only filesystem
-
-flatpak install nvidia-driver
-# Error: not available
-
-# 2 hours later, still no NVIDIA drivers 😤
-```
-
----
-
-## ✨ Do This Instead:
 
 ```bash
 eshu install nvidia

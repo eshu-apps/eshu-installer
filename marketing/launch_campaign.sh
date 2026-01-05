@@ -5,7 +5,7 @@
 set -e
 
 REPO_URL="https://github.com/eshu-apps/eshu-installer"
-PREMIUM_URL="https://eshu-apps.gumroad.com/l/eshu-premium"
+PREMIUM_URL="https://eshuapps.gumroad.com/l/eshu-premium"
 VERSION="0.4.0"
 
 echo "═══════════════════════════════════════════════════════════"

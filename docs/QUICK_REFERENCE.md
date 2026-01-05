@@ -156,4 +156,4 @@ Location: `~/.config/eshu/config.json`
 - 🧹 **Smart Cleanup** - Advanced bloat detection
 - 🤖 **Unlimited AI** - No query limits
 
-[Upgrade to Premium →](https://eshu-apps.gumroad.com/l/eshu-premium)
+[Upgrade to Premium →](https://eshuapps.gumroad.com/l/eshu-premium)

@@ -426,7 +426,7 @@ git pull origin main
 ## 📞 Questions?
 
 - GitHub Issues: https://github.com/eshu-apps/eshu-installer/issues
-- Premium Support: https://eshu-apps.gumroad.com/l/eshu-premium
+- Premium Support: https://eshuapps.gumroad.com/l/eshu-premium
 
 ---
 

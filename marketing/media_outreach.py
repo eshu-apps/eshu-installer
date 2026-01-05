@@ -88,7 +88,7 @@ eshu maintain               # Updates ALL package managers at once
 **Links:**
 - GitHub: https://github.com/eshu-apps/eshu-installer
 - Live Demo: One-line install script
-- Premium: https://eshu-apps.gumroad.com/l/eshu-premium
+- Premium: https://eshuapps.gumroad.com/l/eshu-premium
 
 I'd love to hear your thoughts or answer any questions. Happy to provide:
 - Exclusive interview

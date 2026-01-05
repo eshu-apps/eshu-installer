@@ -49,7 +49,7 @@ Homepage = "https://github.com/eshu-apps/eshu-installer"
 Documentation = "https://github.com/eshu-apps/eshu-installer/blob/main/README.md"
 Repository = "https://github.com/eshu-apps/eshu-installer"
 "Bug Tracker" = "https://github.com/eshu-apps/eshu-installer/issues"
-"Upgrade to Premium" = "https://eshu-apps.gumroad.com/l/eshu-premium"
+"Upgrade to Premium" = "https://eshuapps.gumroad.com/l/eshu-premium"
 
 [project.scripts]
 eshu = "eshu.cli_enhanced:app"

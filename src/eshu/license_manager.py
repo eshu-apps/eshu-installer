@@ -315,7 +315,7 @@ class LicenseManager:
     
     def get_upgrade_url(self) -> str:
         """Get URL to upgrade to premium"""
-        return "https://eshu-apps.gumroad.com/l/eshu-premium"
+        return "https://eshuapps.gumroad.com/l/eshu-premium"
     
     def show_feature_comparison(self) -> Dict[str, Any]:
         """Get feature comparison for display"""

@@ -45,7 +45,7 @@ curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/insta
 
 **Links:**
 - GitHub: https://github.com/eshu-apps/eshu-installer
-- Premium: https://eshu-apps.gumroad.com/l/eshu-premium
+- Premium: https://eshuapps.gumroad.com/l/eshu-premium
 
 **Tech Stack:** Python, Anthropic Claude API, Ollama support, SQLite
 

@@ -18,7 +18,7 @@
 [![Version](https://img.shields.io/badge/version-0.4.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-<a href="https://eshu-apps.gumroad.com/l/eshu-premium"><img src="https://img.shields.io/badge/Premium-$9.99%2Fmonth-gold.svg?style=for-the-badge" alt="Upgrade to Premium"></a>
+<a href="https://eshuapps.gumroad.com/l/eshu-premium"><img src="https://img.shields.io/badge/Premium-$9.99%2Fmonth-gold.svg?style=for-the-badge" alt="Upgrade to Premium"></a>
 
 </div>
 
@@ -258,7 +258,7 @@ eshu config set-provider anthropic
 ```
 
 **Free tier:** 10 AI queries/day
-**Premium:** Unlimited AI + bundles + maintenance → [$9.99/month](https://eshu-apps.gumroad.com/l/eshu-premium)
+**Premium:** Unlimited AI + bundles + maintenance → [$9.99/month](https://eshuapps.gumroad.com/l/eshu-premium)
 
 ---
 
@@ -296,7 +296,7 @@ eshu config set-provider anthropic
 | **Cloud Bundle Sync** | ❌ | ✅ |
 | **Priority Support** | ❌ | ✅ |
 
-[**🚀 Upgrade to Premium**](https://eshu-apps.gumroad.com/l/eshu-premium) | [💝 Donate](https://github.com/sponsors/eshu-apps)
+[**🚀 Upgrade to Premium**](https://eshuapps.gumroad.com/l/eshu-premium) | [💝 Donate](https://github.com/sponsors/eshu-apps)
 
 </div>
 
@@ -507,7 +507,7 @@ Built with:
 
 **Stop juggling package managers. Start using ESHU.**
 
-[Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshu-apps.gumroad.com/l/eshu-premium) • [Docs](docs/)
+[Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshuapps.gumroad.com/l/eshu-premium) • [Docs](docs/)
 
 ---
 

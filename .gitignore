@@ -1,3 +1,22 @@
+# Development and process files - keep out of repo
+ADVANCED_FEATURES*.md
+IMPROVEMENTS*.md
+PHASE_*.md
+SHIP_*.md
+SUMMARY_*.md
+RELEASE_NOTES_*.md
+TODO*.md
+NOTES*.md
+*_COMPLETE.md
+*_REPORT.md
+*_GUIDE.md
+
+# Marketing working files (scripts stay, drafts don't)
+marketing/drafts/
+marketing/bots/digests/
+marketing/*.swp
+marketing/*.kate-swp
+
 # Python
 __pycache__/
 *.py[cod]
@@ -19,13 +38,11 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
-# Virtual environments
+# Virtual Environment
 venv/
 ENV/
 env/
-.venv
 
 # IDE
 .vscode/
@@ -33,40 +50,23 @@ env/
 *.swp
 *.swo
 *~
+.kate-swp
+
+# OS
 .DS_Store
+Thumbs.db
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
-.tox/
-.mypy_cache/
-.ruff_cache/
 
-# Local development
-*.log
-.env
-.envrc
+# Local configs
+config.local.json
+credentials.env
+.env.local
 
-# Temporary files
-*.tmp
+# Backup files
 *.bak
-*.orig
-/tmp/
-
-# Documentation builds
-docs/_build/
-site/
-
-# Distribution
-*.tar.gz
-*.whl
-
-# Local config
-config.json
-eshu.db
-
-# Cleanup scripts and temporary docs
-cleanup-repo.sh
-FIXES_APPLIED.md
-QUICKSTART.md
+*.backup
+*~

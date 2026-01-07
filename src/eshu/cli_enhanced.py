@@ -958,6 +958,66 @@ def apply(
 
 
 @app.command()
+def trace(
+    action: str = typer.Argument(..., help="Action: bisect, snapshots, diff, status"),
+    args: Optional[List[str]] = typer.Argument(None, help="Additional arguments"),
+):
+    """Time Travel Debug - Find packages that broke your system (Premium)
+
+    Examples:
+        eshu trace bisect              # Start bisect session
+        eshu trace snapshots           # List snapshots
+        eshu trace diff snap1 snap2    # Compare snapshots
+        eshu trace status              # Show trace status
+    """
+
+    try:
+        config = load_config()
+        license_mgr = LicenseManager(cache_dir=config.cache_dir)
+
+        # Check premium access
+        if not check_license_feature(license_mgr, "eshu_paths"):  # Using eshu_paths as premium marker
+            console.print("\n[yellow]💎 Eshu Trace is a Premium feature[/yellow]\n")
+            console.print("Upgrade to Eshu Premium to get:")
+            console.print("  ✓ Unlimited time travel debugging")
+            console.print("  ✓ Automated bisect with VM testing")
+            console.print("  ✓ AI conflict prediction")
+            console.print("  ✓ All other Premium features\n")
+            console.print(f"Upgrade: {license_mgr.get_upgrade_url()}")
+            console.print("\n[dim]Or purchase standalone Eshu Trace:")
+            console.print("  https://eshu-trace.gumroad.com/l/eshu-trace ($19.99 one-time)[/dim]\n")
+            return
+
+        # Check if eshu-trace is installed
+        import shutil
+        if not shutil.which("eshu-trace"):
+            console.print("\n[yellow]⚠ Eshu Trace binary not found[/yellow]\n")
+            console.print("Install eshu-trace:")
+            console.print("  curl -L https://github.com/eshu-apps/eshu-trace/releases/latest/download/eshu-trace -o eshu-trace")
+            console.print("  chmod +x eshu-trace")
+            console.print("  sudo mv eshu-trace /usr/local/bin/\n")
+            return
+
+        # Build command
+        cmd = ["eshu-trace", action]
+        if args:
+            cmd.extend(args)
+
+        # Run eshu-trace
+        console.print(f"\n[dim]Running: {' '.join(cmd)}[/dim]\n")
+        result = subprocess.run(cmd, check=False)
+
+        sys.exit(result.returncode)
+
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Trace cancelled[/yellow]")
+        sys.exit(0)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+
+
+@app.command()
 def setup():
     """Run interactive setup wizard to configure ESHU"""
     import subprocess

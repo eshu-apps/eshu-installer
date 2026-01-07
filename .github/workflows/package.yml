@@ -1,0 +1,154 @@
+name: Package Releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-deb:
+    name: Build Debian Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y devscripts debhelper python3-setuptools
+          pip install build wheel
+
+      - name: Build package
+        run: |
+          python -m build
+
+      - name: Create .deb package
+        run: |
+          # Create debian package structure
+          mkdir -p debian-pkg/DEBIAN
+          mkdir -p debian-pkg/usr/local/bin
+          mkdir -p debian-pkg/usr/share/doc/eshu
+
+          # Copy files
+          cp dist/*.whl debian-pkg/usr/share/doc/eshu/
+
+          # Create control file
+          cat > debian-pkg/DEBIAN/control << EOF
+          Package: eshu
+          Version: $(git describe --tags --abbrev=0 | sed 's/^v//')
+          Section: utils
+          Priority: optional
+          Architecture: all
+          Depends: python3 (>= 3.8), python3-pip
+          Maintainer: Eshu Team <team@eshu-apps.com>
+          Description: AI-Driven Universal Package Installer for Linux
+           ESHU unifies package management across different Linux distributions,
+           providing intelligent package search, conflict detection, and more.
+          EOF
+
+          # Create postinst script
+          cat > debian-pkg/DEBIAN/postinst << 'EOF'
+          #!/bin/bash
+          set -e
+          pip3 install /usr/share/doc/eshu/*.whl
+          EOF
+          chmod +x debian-pkg/DEBIAN/postinst
+
+          # Build deb
+          dpkg-deb --build debian-pkg eshu.deb
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: eshu-deb
+          path: eshu.deb
+
+  build-rpm:
+    name: Build RPM Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+          pip install build wheel
+
+      - name: Build package
+        run: |
+          python -m build
+
+      - name: Create .rpm package
+        run: |
+          # Create RPM spec file
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          cp dist/*.whl ~/rpmbuild/SOURCES/
+
+          cat > ~/rpmbuild/SPECS/eshu.spec << EOF
+          Name:           eshu
+          Version:        $(git describe --tags --abbrev=0 | sed 's/^v//')
+          Release:        1%{?dist}
+          Summary:        AI-Driven Universal Package Installer for Linux
+
+          License:        MIT
+          URL:            https://github.com/eshu-apps/eshu-installer
+          Source0:        eshu-*.whl
+
+          Requires:       python3 >= 3.8
+
+          %description
+          ESHU unifies package management across different Linux distributions,
+          providing intelligent package search, conflict detection, and more.
+
+          %install
+          mkdir -p %{buildroot}/usr/share/eshu
+          cp %{SOURCE0} %{buildroot}/usr/share/eshu/
+
+          %post
+          pip3 install /usr/share/eshu/*.whl
+
+          %files
+          /usr/share/eshu/*.whl
+          EOF
+
+          rpmbuild -ba ~/rpmbuild/SPECS/eshu.spec
+          cp ~/rpmbuild/RPMS/*/*.rpm .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: eshu-rpm
+          path: "*.rpm"
+
+  release:
+    name: Create Release
+    needs: [build-deb, build-rpm]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            eshu-deb/eshu.deb
+            eshu-rpm/*.rpm
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

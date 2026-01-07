@@ -590,6 +590,35 @@ def install(
             recommended_results = llm.rank_and_recommend(query, ranked_results[:20], profile, check_community=True)
         else:
             recommended_results = [(r, None) for r in ranked_results[:20]]
+
+        # Check for conflicts (Conflict Oracle)
+        from .conflict_oracle import ConflictOracle
+
+        oracle = ConflictOracle(config.cache_dir, license.tier)
+
+        # Check conflicts for top result
+        if recommended_results:
+            top_package = recommended_results[0][0]
+            system_info = {
+                "gpu": getattr(profile, "gpu", ""),
+                "session_type": getattr(profile, "session_type", ""),
+                "kernel": getattr(profile, "kernel_version", "")
+            }
+
+            conflicts = oracle.check_conflicts(
+                top_package.name,
+                profile.installed_packages,
+                system_info
+            )
+
+            if conflicts:
+                resolution = oracle.display_conflicts(conflicts)
+
+                if resolution and "cancel" in resolution.lower():
+                    console.print("[yellow]Installation cancelled due to conflicts[/yellow]")
+                    sys.exit(0)
+                elif resolution and "remove" in resolution.lower():
+                    console.print(f"\n[yellow]💡 Conflict resolution recommended. Handle manually or use suggested commands.[/yellow]")
         
         # Display results with pagination
         selected = display_paginated_results(recommended_results)
@@ -776,6 +805,156 @@ def donate():
     console.print("  📣 Share with friends")
     console.print("\n[yellow]Every contribution matters![/yellow]")
     console.print("[dim]Even $1 helps cover server costs and keeps development active.[/dim]\n")
+
+
+@app.command()
+def try_package(
+    package: str = typer.Argument(..., help="Package to try in isolated environment"),
+    keep: bool = typer.Option(False, "--keep", "-k", help="Keep environment after testing"),
+):
+    """Try a package in isolated environment without affecting your system (Ghost Mode)
+
+    Examples:
+        eshu try gimp              # Test GIMP, discard after closing
+        eshu try vlc --keep        # Test VLC, keep if you like it
+        eshu try firefox           # Try Firefox without installing
+    """
+
+    try:
+        from .ghost_mode import GhostMode
+
+        ghost = GhostMode()
+        success = ghost.try_package(package, keep=keep)
+
+        sys.exit(0 if success else 1)
+
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Ghost mode cancelled[/yellow]")
+        sys.exit(0)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def ghost(
+    action: str = typer.Argument(..., help="Action: list, clean, status"),
+):
+    """Manage Ghost Mode environments
+
+    Examples:
+        eshu ghost list            # List all ghost environments
+        eshu ghost clean           # Clean up all ghost environments
+        eshu ghost status          # Show ghost mode status
+    """
+
+    try:
+        from .ghost_mode import GhostMode
+
+        ghost = GhostMode()
+
+        if action == "list":
+            envs = ghost.list_environments()
+
+            if not envs:
+                console.print("[yellow]No ghost environments found[/yellow]")
+                return
+
+            console.print(f"\n[bold cyan]Ghost Environments:[/bold cyan]\n")
+
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Name", style="cyan")
+            table.add_column("Package", style="green")
+            table.add_column("Backend", style="yellow")
+
+            for env in envs:
+                table.add_row(env.name, env.package_name, env.backend)
+
+            console.print(table)
+            console.print(f"\n[dim]Total: {len(envs)} environment(s)[/dim]\n")
+
+        elif action == "clean":
+            ghost.cleanup_all()
+
+        elif action == "status":
+            available, message = ghost.is_available()
+
+            if available:
+                console.print(f"\n[green]✓ {message}[/green]\n")
+            else:
+                console.print(f"\n[red]✗ Ghost Mode not available[/red]")
+                console.print(f"[yellow]{message}[/yellow]\n")
+
+        else:
+            console.print(f"[red]Unknown action: {action}[/red]")
+            console.print("Available actions: list, clean, status")
+
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def export(
+    output: Optional[str] = typer.Option(None, "--output", "-o", help="Output file (default: stdout)"),
+    format: str = typer.Option("yaml", "--format", "-f", help="Format: yaml or json"),
+    no_intents: bool = typer.Option(False, "--no-intents", help="Export raw packages instead of intents"),
+):
+    """Export system packages to Eshufile for reproducible setups
+
+    Examples:
+        eshu export                        # Print to stdout
+        eshu export -o system.eshu         # Save to file
+        eshu export -o system.json -f json # Export as JSON
+    """
+
+    try:
+        from .eshufile import EshuFileManager
+        from pathlib import Path
+
+        config = load_config()
+        manager = EshuFileManager(config.cache_dir)
+
+        output_path = Path(output) if output else None
+        manager.export_system(output_path, include_intents=not no_intents)
+
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def apply(
+    eshufile: str = typer.Argument(..., help="Path to Eshufile"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be installed"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Auto-confirm installation"),
+):
+    """Apply an Eshufile to reproduce a system setup on any distro
+
+    Examples:
+        eshu apply system.eshu              # Apply Eshufile
+        eshu apply system.eshu --dry-run    # Preview changes
+        eshu apply system.eshu -y           # Auto-confirm
+    """
+
+    try:
+        from .eshufile import EshuFileManager
+        from pathlib import Path
+
+        config = load_config()
+        manager = EshuFileManager(config.cache_dir)
+
+        success = manager.apply_eshufile(
+            Path(eshufile),
+            dry_run=dry_run,
+            auto_confirm=yes
+        )
+
+        sys.exit(0 if success else 1)
+
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
 
 
 @app.command()

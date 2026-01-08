@@ -81,25 +81,50 @@ print_success "pip is available"
 INSTALL_DIR="$HOME/.local/share/eshu"
 BIN_DIR="$HOME/.local/bin"
 VENV_DIR="$INSTALL_DIR/venv"
+REPO_URL="https://github.com/eshu-apps/eshu-installer.git"
 
 print_info "Installation directory: $INSTALL_DIR"
 print_info "Binary directory: $BIN_DIR"
 
 # Create directories
-mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 
+# Check if git is available
+if ! command -v git &> /dev/null; then
+    print_error "git is required but not installed"
+    print_info "Install git with: sudo pacman -S git"
+    exit 1
+fi
+
 # Check if already installed
-if [ -d "$VENV_DIR" ]; then
-    print_warning "ESHU is already installed"
+if [ -d "$INSTALL_DIR" ]; then
+    print_warning "ESHU is already installed at $INSTALL_DIR"
     read -p "Do you want to reinstall? [y/N] " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         print_info "Installation cancelled"
+        print_info "To update, run: eshu update"
         exit 0
     fi
     print_info "Removing old installation..."
-    rm -rf "$VENV_DIR"
+    rm -rf "$INSTALL_DIR"
+fi
+
+# Clone or update repository
+print_header "Downloading ESHU"
+
+if [ -d "$INSTALL_DIR/.git" ]; then
+    print_info "Updating existing repository..."
+    git -C "$INSTALL_DIR" pull
+    print_success "Repository updated"
+else
+    print_info "Cloning repository..."
+    if git clone "$REPO_URL" "$INSTALL_DIR" > /dev/null 2>&1; then
+        print_success "Repository cloned"
+    else
+        print_error "Failed to clone repository"
+        exit 1
+    fi
 fi
 
 # Create virtual environment
@@ -119,11 +144,8 @@ print_success "pip upgraded"
 print_header "Installing ESHU"
 print_info "This may take a minute..."
 
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Install from local directory
-if pip install -e "$SCRIPT_DIR" > /tmp/eshu-install.log 2>&1; then
+# Install from cloned directory
+if pip install -e "$INSTALL_DIR" > /tmp/eshu-install.log 2>&1; then
     print_success "ESHU installed successfully"
 else
     print_error "Installation failed. Check /tmp/eshu-install.log for details"

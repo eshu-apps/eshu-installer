@@ -962,7 +962,7 @@ def trace(
     action: str = typer.Argument(..., help="Action: bisect, snapshots, diff, status"),
     args: Optional[List[str]] = typer.Argument(None, help="Additional arguments"),
 ):
-"""Find which package broke your system (Premium)
+    """Find which package broke your system (Premium)
 
     Examples:
         eshu trace bisect              # Find the breaking package

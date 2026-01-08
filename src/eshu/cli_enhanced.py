@@ -1021,19 +1021,47 @@ def setup():
     """Run interactive setup wizard to configure ESHU"""
     import subprocess
 
-    console.print("\n[bold cyan]🚀 ESHU Setup Wizard[/bold cyan]\n")
+    # Exciting welcome banner
+    console.print("\n" + "="*60, style="cyan")
+    console.print("🎉  WELCOME TO ESHU - THE UNIVERSAL PACKAGE MANAGER!  🎉", style="bold cyan", justify="center")
+    console.print("="*60 + "\n", style="cyan")
+
+    console.print("[bold green]✨ What You Can Do With ESHU:[/bold green]\n")
+    console.print("  [cyan]📦 One Command for Everything[/cyan]")
+    console.print("     • Install from ANY package manager (pacman, apt, flatpak, AUR, pip, npm...)")
+    console.print("     • Auto-detects the right manager for any package\n")
+
+    console.print("  [cyan]🤖 AI-Powered Intelligence[/cyan]")
+    console.print("     • Ask in plain English: 'eshu chat install video editor'")
+    console.print("     • Smart package recommendations based on your system\n")
+
+    console.print("  [cyan]🚀 Free Features:[/cyan]")
+    console.print("     • Universal install/search/remove for all packages")
+    console.print("     • System profiling and recommendations")
+    console.print("     • 10 AI queries per day\n")
+
+    console.print("  [cyan]💎 Premium Features ($9.99/month):[/cyan]")
+    console.print("     • [yellow]Eshu's Path[/yellow] - Complete curated setups (gaming, dev, media)")
+    console.print("     • [yellow]Unlimited AI queries[/yellow] - Chat as much as you want")
+    console.print("     • [yellow]Time Machine snapshots[/yellow] - Roll back broken installs")
+    console.print("     • [yellow]Ghost Mode[/yellow] - Try packages without installing")
+    console.print("     • [yellow]Smart bloat analyzer[/yellow] - Find & remove junk")
+    console.print("     • [yellow]Community warnings[/yellow] - Know before you break things")
+    console.print("     • Priority support & early access\n")
+
+    console.print("[dim]💝 Want Premium? Get 7-day free trial: eshu license-cmd trial[/dim]\n")
+    console.print("─" * 60, style="cyan")
 
     # LLM Configuration
-    console.print("[bold]🤖 Step 1: LLM Configuration[/bold]")
-    console.print("\nESHU uses AI for intelligent package recommendations.")
-    console.print("\nChoose your LLM provider:")
-    console.print("  [cyan]1[/cyan]) Anthropic Claude (recommended, requires API key)")
-    console.print("     Get free key at: https://console.anthropic.com/")
-    console.print("  [cyan]2[/cyan]) OpenAI GPT (requires API key)")
-    console.print("     Get key at: https://platform.openai.com/api-keys")
-    console.print("  [cyan]3[/cyan]) Ollama (local, free, requires Ollama)")
-    console.print("     Install from: https://ollama.ai")
-    console.print("  [cyan]4[/cyan]) Skip for now\n")
+    console.print("\n[bold]🤖 Optional: AI Configuration[/bold]")
+    console.print("\nWant AI-powered package suggestions? Configure an LLM:")
+    console.print("  [cyan]1[/cyan]) Anthropic Claude (recommended)")
+    console.print("     Free tier available: https://console.anthropic.com/")
+    console.print("  [cyan]2[/cyan]) OpenAI GPT")
+    console.print("     Get key: https://platform.openai.com/api-keys")
+    console.print("  [cyan]3[/cyan]) Ollama (100% local & free)")
+    console.print("     Install: https://ollama.ai")
+    console.print("  [cyan]4[/cyan]) Skip (you can configure later with 'eshu setup')\n")
 
     choice = Prompt.ask("Enter choice", choices=["1", "2", "3", "4"], default="4")
 
@@ -1095,14 +1123,35 @@ def setup():
     else:
         console.print("[yellow]⏩ Skipping systemd service[/yellow]")
 
-    # Summary
-    console.print("\n[bold green]✅ Setup Complete![/bold green]")
-    console.print("\n[cyan]Try these commands:[/cyan]")
-    console.print("  eshu search firefox")
-    console.print("  eshu install hyprland")
-    console.print("  eshu profile")
-    console.print("  eshu license-cmd status")
-    console.print("\n[dim]Run 'eshu --help' for full command list[/dim]\n")
+    # Exciting summary with examples
+    console.print("\n" + "="*60, style="green")
+    console.print("🎉  YOU'RE ALL SET! LET'S GET STARTED!  🎉", style="bold green", justify="center")
+    console.print("="*60 + "\n", style="green")
+
+    console.print("[bold cyan]🚀 Try These Commands:[/bold cyan]\n")
+
+    console.print("[yellow]Basic Package Management:[/yellow]")
+    console.print("  eshu search firefox         # Search across ALL package managers")
+    console.print("  eshu install hyprland       # Auto-detects AUR, installs perfectly")
+    console.print("  eshu remove bloat           # Remove packages you don't need")
+    console.print("  eshu profile                # See your system info\n")
+
+    console.print("[yellow]AI-Powered Magic:[/yellow]")
+    console.print("  eshu chat install video editor    # Ask in plain English!")
+    console.print("  eshu chat setup gaming rig        # Get full gaming setup\n")
+
+    console.print("[yellow]💎 Premium Commands (Free Trial Available!):[/yellow]")
+    console.print("  eshu license-cmd trial            # Get 7-day free trial")
+    console.print("  eshu paths gaming                 # Complete gaming setup (Premium)")
+    console.print("  eshu try gimp                     # Test without installing (Premium)")
+    console.print("  eshu snapshot create              # Create rollback point (Premium)\n")
+
+    console.print("[cyan]📚 Need Help?[/cyan]")
+    console.print("  eshu --help                       # Full command list")
+    console.print("  eshu license-cmd upgrade          # See Premium benefits")
+    console.print("  eshu donate                       # Support development\n")
+
+    console.print("[bold green]Happy installing! 🚀[/bold green]\n")
 
 
 @app.command()

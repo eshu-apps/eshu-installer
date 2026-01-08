@@ -1288,20 +1288,23 @@ def update():
     """Update eshu to the latest version"""
     import subprocess
     from pathlib import Path
+    import os
 
     console.print("\n[bold cyan]🔄 Updating eshu...[/bold cyan]\n")
 
-    # Find the installation directory
-    eshu_dir = Path.home() / ".local" / "share" / "eshu"
+    # Find the installation directory by checking where this file is
+    current_file = Path(__file__).resolve()
+    eshu_dir = current_file.parent.parent.parent  # Go up from cli_enhanced.py -> eshu -> src -> repo root
 
-    if not eshu_dir.exists():
-        console.print("[yellow]⚠️  Could not find eshu installation directory[/yellow]")
-        console.print("[dim]Expected location: ~/.local/share/eshu[/dim]\n")
-        console.print("Manual update:")
-        console.print("  cd ~/.local/share/eshu")
-        console.print("  git pull")
-        console.print("  ~/.local/share/eshu/venv/bin/pip install -e . --upgrade\n")
+    # Verify this is a git repo
+    if not (eshu_dir / ".git").exists():
+        console.print("[yellow]⚠️  Could not find git repository[/yellow]")
+        console.print(f"[dim]Checked: {eshu_dir}[/dim]\n")
+        console.print("Reinstall eshu to enable automatic updates:")
+        console.print("  curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash\n")
         sys.exit(1)
+
+    console.print(f"[dim]Found installation at: {eshu_dir}[/dim]")
 
     try:
         # Check current version/commit
@@ -1375,13 +1378,13 @@ def update():
         console.print("[dim]Error output:[/dim]")
         if e.stderr:
             console.print(f"[dim]{e.stderr}[/dim]")
-        console.print("\n[yellow]Manual update:[/yellow]")
-        console.print("  cd ~/.local/share/eshu")
-        console.print("  git pull")
-        console.print("  ~/.local/share/eshu/venv/bin/pip install -e . --upgrade\n")
+        console.print("\n[yellow]Reinstall eshu to fix:[/yellow]")
+        console.print("  curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash\n")
         sys.exit(1)
     except Exception as e:
-        console.print(f"\n[red]❌ Unexpected error: {e}[/red]\n")
+        console.print(f"\n[red]❌ Unexpected error: {e}[/red]")
+        console.print("\n[yellow]Reinstall eshu to fix:[/yellow]")
+        console.print("  curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash\n")
         sys.exit(1)
 
 

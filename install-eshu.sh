@@ -3,8 +3,23 @@
 # ESHU Installer - User-Friendly Installation Script
 # Handles Python virtual environments automatically
 #
+# Usage:
+#   ./install-eshu.sh           # Interactive install
+#   ./install-eshu.sh --force   # Force reinstall without prompting
+#
 
 set -e
+
+# Parse arguments
+FORCE_INSTALL=false
+for arg in "$@"; do
+    case $arg in
+        -f|--force)
+            FORCE_INSTALL=true
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -83,47 +98,74 @@ BIN_DIR="$HOME/.local/bin"
 VENV_DIR="$INSTALL_DIR/venv"
 REPO_URL="https://github.com/eshu-apps/eshu-installer.git"
 
-print_info "Installation directory: $INSTALL_DIR"
+# Check if running from a cloned git repo
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -d "$SCRIPT_DIR/.git" ]; then
+    # User has cloned the repo - use that location for installation
+    INSTALL_DIR="$SCRIPT_DIR"
+    VENV_DIR="$INSTALL_DIR/venv"
+    print_info "Detected git repository at: $INSTALL_DIR"
+    print_info "Installing from your cloned repo"
+else
+    print_info "Installation directory: $INSTALL_DIR"
+fi
+
 print_info "Binary directory: $BIN_DIR"
 
 # Create directories
 mkdir -p "$BIN_DIR"
 
-# Check if git is available
-if ! command -v git &> /dev/null; then
-    print_error "git is required but not installed"
-    print_info "Install git with: sudo pacman -S git"
-    exit 1
+# Check if git is available (only needed if not installing from existing repo)
+if [ ! -d "$SCRIPT_DIR/.git" ]; then
+    if ! command -v git &> /dev/null; then
+        print_error "git is required but not installed"
+        print_info "Install git with your package manager"
+        exit 1
+    fi
 fi
 
 # Check if already installed
-if [ -d "$INSTALL_DIR" ]; then
-    print_warning "ESHU is already installed at $INSTALL_DIR"
-    read -p "Do you want to reinstall? [y/N] " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_info "Installation cancelled"
-        print_info "To update, run: eshu update"
-        exit 0
+if [ -d "$VENV_DIR" ]; then
+    if [ "$FORCE_INSTALL" = true ]; then
+        print_info "Force reinstall requested, removing old installation..."
+        rm -rf "$VENV_DIR"
+    else
+        # Check if stdin is a terminal (interactive)
+        if [ -t 0 ]; then
+            print_warning "ESHU is already installed"
+            read -p "Do you want to reinstall? [y/N] " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                print_info "Installation cancelled"
+                print_info "To update, run: eshu update"
+                exit 0
+            fi
+            print_info "Removing old installation..."
+            rm -rf "$VENV_DIR"
+        else
+            # Non-interactive (piped from curl) - auto-update
+            print_info "ESHU is already installed, updating..."
+            rm -rf "$VENV_DIR"
+        fi
     fi
-    print_info "Removing old installation..."
-    rm -rf "$INSTALL_DIR"
 fi
 
-# Clone or update repository
-print_header "Downloading ESHU"
+# Clone or update repository (only if not installing from existing repo)
+if [ ! -d "$SCRIPT_DIR/.git" ]; then
+    print_header "Downloading ESHU"
 
-if [ -d "$INSTALL_DIR/.git" ]; then
-    print_info "Updating existing repository..."
-    git -C "$INSTALL_DIR" pull
-    print_success "Repository updated"
-else
-    print_info "Cloning repository..."
-    if git clone "$REPO_URL" "$INSTALL_DIR" > /dev/null 2>&1; then
-        print_success "Repository cloned"
+    if [ -d "$INSTALL_DIR/.git" ]; then
+        print_info "Updating existing repository..."
+        git -C "$INSTALL_DIR" pull
+        print_success "Repository updated"
     else
-        print_error "Failed to clone repository"
-        exit 1
+        print_info "Cloning repository..."
+        if git clone "$REPO_URL" "$INSTALL_DIR" > /dev/null 2>&1; then
+            print_success "Repository cloned"
+        else
+            print_error "Failed to clone repository"
+            exit 1
+        fi
     fi
 fi
 
@@ -157,12 +199,12 @@ fi
 print_header "Creating System Command"
 
 WRAPPER_SCRIPT="$BIN_DIR/eshu"
-cat > "$WRAPPER_SCRIPT" << 'EOF'
+cat > "$WRAPPER_SCRIPT" << EOF
 #!/usr/bin/env bash
 # ESHU wrapper script
-VENV_DIR="$HOME/.local/share/eshu/venv"
-source "$VENV_DIR/bin/activate"
-exec python -m eshu.cli_enhanced "$@"
+VENV_DIR="$VENV_DIR"
+source "\$VENV_DIR/bin/activate"
+exec python -m eshu.cli_enhanced "\$@"
 EOF
 
 chmod +x "$WRAPPER_SCRIPT"

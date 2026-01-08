@@ -261,14 +261,12 @@ eshu update
 This will:
 - ✅ Check for new updates
 - ✅ Download latest code from GitHub
-- ✅ Reinstall dependencies
+- ✅ Reinstall dependencies automatically
 - ✅ Show recent changes
 
-**Manual update (if needed):**
+**If update fails, just reinstall:**
 ```bash
-cd ~/.local/share/eshu
-git pull
-~/.local/share/eshu/venv/bin/pip install -e . --upgrade
+curl -fsSL https://raw.githubusercontent.com/eshu-apps/eshu-installer/main/install-eshu.sh | bash
 ```
 
 ---

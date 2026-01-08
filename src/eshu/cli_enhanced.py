@@ -1283,6 +1283,108 @@ def stats(
         sys.exit(1)
 
 
+@app.command()
+def update():
+    """Update eshu to the latest version"""
+    import subprocess
+    from pathlib import Path
+
+    console.print("\n[bold cyan]🔄 Updating eshu...[/bold cyan]\n")
+
+    # Find the installation directory
+    eshu_dir = Path.home() / ".local" / "share" / "eshu"
+
+    if not eshu_dir.exists():
+        console.print("[yellow]⚠️  Could not find eshu installation directory[/yellow]")
+        console.print("[dim]Expected location: ~/.local/share/eshu[/dim]\n")
+        console.print("Manual update:")
+        console.print("  cd ~/.local/share/eshu")
+        console.print("  git pull")
+        console.print("  ~/.local/share/eshu/venv/bin/pip install -e . --upgrade\n")
+        sys.exit(1)
+
+    try:
+        # Check current version/commit
+        console.print("[dim]Checking for updates...[/dim]")
+
+        # Fetch latest changes
+        result = subprocess.run(
+            ["git", "-C", str(eshu_dir), "fetch"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        # Check if updates available
+        result = subprocess.run(
+            ["git", "-C", str(eshu_dir), "rev-list", "HEAD...origin/main", "--count"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        commits_behind = int(result.stdout.strip())
+
+        if commits_behind == 0:
+            console.print("[green]✓ You're already on the latest version![/green]\n")
+            return
+
+        console.print(f"[cyan]Found {commits_behind} new update(s)[/cyan]")
+
+        # Pull latest changes
+        console.print("\n[dim]Downloading updates...[/dim]")
+        result = subprocess.run(
+            ["git", "-C", str(eshu_dir), "pull"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        console.print("[green]✓ Downloaded latest code[/green]")
+
+        # Reinstall
+        console.print("\n[dim]Installing updates...[/dim]")
+        venv_pip = eshu_dir / "venv" / "bin" / "pip"
+
+        result = subprocess.run(
+            [str(venv_pip), "install", "-e", str(eshu_dir), "--upgrade", "--quiet"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        console.print("[green]✓ Installation complete[/green]")
+
+        # Show what changed
+        console.print("\n[bold]📋 Recent Changes:[/bold]\n")
+        result = subprocess.run(
+            ["git", "-C", str(eshu_dir), "log", "-5", "--oneline", "--decorate"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        for line in result.stdout.strip().split('\n'):
+            console.print(f"  [dim]{line}[/dim]")
+
+        console.print("\n[bold green]✅ eshu updated successfully![/bold green]\n")
+        console.print("[dim]Restart your terminal if you experience any issues[/dim]\n")
+
+    except subprocess.CalledProcessError as e:
+        console.print(f"\n[red]❌ Update failed: {e}[/red]")
+        console.print("[dim]Error output:[/dim]")
+        if e.stderr:
+            console.print(f"[dim]{e.stderr}[/dim]")
+        console.print("\n[yellow]Manual update:[/yellow]")
+        console.print("  cd ~/.local/share/eshu")
+        console.print("  git pull")
+        console.print("  ~/.local/share/eshu/venv/bin/pip install -e . --upgrade\n")
+        sys.exit(1)
+    except Exception as e:
+        console.print(f"\n[red]❌ Unexpected error: {e}[/red]\n")
+        sys.exit(1)
+
+
 # Import remaining commands from original CLI
 from .cli import profile, cleanup, snapshot, config_cmd, version
 

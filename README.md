@@ -249,6 +249,28 @@ cd eshu-installer
 - ✅ Creates `eshu` command in `~/.local/bin`
 - ✅ Runs setup wizard
 
+### 🔄 Updating
+
+Keep eshu up-to-date with the latest features and fixes:
+
+```bash
+# One command to update everything
+eshu update
+```
+
+This will:
+- ✅ Check for new updates
+- ✅ Download latest code from GitHub
+- ✅ Reinstall dependencies
+- ✅ Show recent changes
+
+**Manual update (if needed):**
+```bash
+cd ~/.local/share/eshu
+git pull
+~/.local/share/eshu/venv/bin/pip install -e . --upgrade
+```
+
 ---
 
 ## 💻 Quick Start

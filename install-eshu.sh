@@ -260,3 +260,10 @@ print_info "Premium Features: https://eshuapps.gumroad.com/l/eshu-premium"
 echo ""
 print_success "Happy installing! 🚀"
 echo ""
+
+# Run setup wizard if this is the first install
+if [ ! -f "$INSTALL_DIR/.setup_complete" ]; then
+    print_header "Running Setup Wizard"
+    "$WRAPPER_SCRIPT" setup
+    touch "$INSTALL_DIR/.setup_complete"
+fi

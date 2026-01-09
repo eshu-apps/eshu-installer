@@ -9,8 +9,10 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.4.0-green.svg)](https://github.com/eshu-apps/eshu-installer/releases)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Website](https://img.shields.io/badge/🌐-eshu--apps.com-blue)](https://eshu-apps.com)
 
 <a href="https://eshuapps.gumroad.com/l/eshu-premium"><img src="https://img.shields.io/badge/Premium-$9.99%2Fmonth-gold.svg?style=for-the-badge" alt="Upgrade to Premium"></a>
+<a href="https://gumroad.com/l/eshu-donate"><img src="https://img.shields.io/badge/💝-Donate-ff69b4.svg?style=for-the-badge" alt="Donate"></a>
 
 </div>
 
@@ -346,7 +348,7 @@ eshu config set-provider anthropic
 | **Cloud Bundle Sync** | ❌ | ✅ |
 | **Priority Support** | ❌ | ✅ |
 
-[**🚀 Upgrade to Premium**](https://eshuapps.gumroad.com/l/eshu-premium) | [💝 Donate](https://github.com/sponsors/eshu-apps)
+[**🚀 Upgrade to Premium**](https://eshuapps.gumroad.com/l/eshu-premium) | [💝 Donate](https://gumroad.com/l/eshu-donate)
 
 </div>
 
@@ -551,13 +553,23 @@ Built with:
 
 ---
 
+## 📞 Support & Contact
+
+- 🌐 **Website**: [eshu-apps.com](https://eshu-apps.com)
+- 📧 **Support**: support@eshu-apps.com
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/eshu-apps/eshu-installer/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/eshu-apps/eshu-installer/discussions)
+- 💝 **Donate**: [Support the Project](https://gumroad.com/l/eshu-donate)
+
+---
+
 <div align="center">
 
 **ESHU v0.4.0** - One command for every package. 🚀
 
 **Stop juggling package managers. Start using ESHU.**
 
-[Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshuapps.gumroad.com/l/eshu-premium) • [Docs](docs/)
+[Website](https://eshu-apps.com) • [Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshuapps.gumroad.com/l/eshu-premium) • [Donate](https://gumroad.com/l/eshu-donate)
 
 ---
 

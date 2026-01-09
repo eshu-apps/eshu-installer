@@ -21,7 +21,7 @@ setup(
     name="eshu-installer",
     version="0.4.0",
     author="ESHU Team",
-    author_email="support@eshu-installer.com",
+    author_email="support@eshu-apps.com",
     description="AI-Driven Universal Package Installer for Linux",
     long_description=long_description,
     long_description_content_type="text/markdown",

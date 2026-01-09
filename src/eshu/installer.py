@@ -2,12 +2,18 @@
 
 import subprocess
 import shutil
+import threading
+import time
 from pathlib import Path
 from typing import Dict, List, Optional
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.console import Console
 from .package_search import PackageResult
 from .llm_engine import LLMEngine
 from .system_profiler import SystemProfile
 from .config import ESHUConfig
+
+console = Console()
 
 
 class PackageInstaller:
@@ -103,15 +109,36 @@ class PackageInstaller:
                 interactive_managers = ['yay', 'paru', 'pacman', 'apt', 'dnf', 'zypper']
                 is_interactive = any(mgr in cmd_parts[0] for mgr in interactive_managers)
 
+                # Check if this is a long-running command that needs progress indication
+                long_running_cmds = ['cargo', 'npm', 'pip', 'make', 'cmake', 'meson', 'ninja']
+                needs_progress = any(cmd in cmd_parts[0] for cmd in long_running_cmds) and 'install' in ' '.join(cmd_parts)
+
                 # Execute with proper I/O handling
                 if is_interactive:
                     # Let user interact directly with the command
                     result = subprocess.run(
                         cmd_parts,
                         check=True,
-                        timeout=300,  # 5 minute timeout
+                        timeout=600,  # 10 minute timeout for interactive
                         cwd=str(self.build_dir) if "make" in cmd or "cmake" in cmd else None
                     )
+                elif needs_progress:
+                    # Show progress spinner for long-running commands
+                    with Progress(
+                        SpinnerColumn(),
+                        TextColumn("[progress.description]{task.description}"),
+                        console=console
+                    ) as progress:
+                        task = progress.add_task(f"Installing {package.name}...", total=None)
+                        result = subprocess.run(
+                            cmd_parts,
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                            timeout=600,  # 10 minute timeout for builds
+                            cwd=str(self.build_dir) if "make" in cmd or "cmake" in cmd else None
+                        )
+                        progress.update(task, completed=True)
                 else:
                     # Capture output for non-interactive commands
                     result = subprocess.run(

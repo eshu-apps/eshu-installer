@@ -1044,11 +1044,15 @@ def setup():
     console.print("     • System profiling and recommendations")
     console.print("     • 10 AI queries per day\n")
 
+    console.print("  [cyan]👻 Ghost Mode - FREE & Available Now![/cyan]")
+    console.print("     • Try any package without installing: [green]eshu try <package>[/green]")
+    console.print("     • Test before you commit - zero risk!")
+    console.print("     • Uses isolated containers (distrobox/podman/flatpak)\n")
+
     console.print("  [cyan]💎 Premium Features ($9.99/month):[/cyan]")
     console.print("     • [yellow]Eshu's Path[/yellow] - Complete curated setups (gaming, dev, media)")
     console.print("     • [yellow]Unlimited AI queries[/yellow] - Chat as much as you want")
     console.print("     • [yellow]Time Machine snapshots[/yellow] - Roll back broken installs")
-    console.print("     • [yellow]Ghost Mode[/yellow] - Try packages without installing")
     console.print("     • [yellow]Smart bloat analyzer[/yellow] - Find & remove junk")
     console.print("     • [yellow]Community warnings[/yellow] - Know before you break things")
     console.print("     • Priority support & early access\n")
@@ -1144,10 +1148,14 @@ def setup():
     console.print("  eshu chat install video editor    # Ask in plain English!")
     console.print("  eshu chat setup gaming rig        # Get full gaming setup\n")
 
+    console.print("[green]👻 Ghost Mode Commands (FREE!):[/green]")
+    console.print("  eshu try gimp                     # Try GIMP without installing")
+    console.print("  eshu try vlc --keep               # Try VLC, keep if you like it")
+    console.print("  eshu ghost list                   # List your ghost environments\n")
+
     console.print("[yellow]💎 Premium Commands (Free Trial Available!):[/yellow]")
     console.print("  eshu license-cmd trial            # Get 7-day free trial")
     console.print("  eshu paths gaming                 # Complete gaming setup (Premium)")
-    console.print("  eshu try gimp                     # Test without installing (Premium)")
     console.print("  eshu snapshot create              # Create rollback point (Premium)\n")
 
     console.print("[cyan]📚 Need Help?[/cyan]")

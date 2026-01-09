@@ -355,7 +355,23 @@ Return JSON with:
             return json.loads(content)
         
         except Exception as e:
-            print(f"Install plan generation error: {e}")
+            error_msg = str(e)
+            print(f"\n⚠️  AI-powered install planning unavailable: {error_msg}")
+
+            # Provide helpful error messages
+            if "404" in error_msg:
+                if self.config.llm_provider == "ollama":
+                    print(f"   💡 Make sure Ollama is running and the model '{self.config.ollama_model}' is installed")
+                    print(f"   💡 Try: ollama pull {self.config.ollama_model}")
+                else:
+                    print("   💡 Check your API credentials and model name")
+            elif "Connection" in error_msg or "timeout" in error_msg.lower():
+                if self.config.llm_provider == "ollama":
+                    print("   💡 Make sure Ollama is running: ollama serve")
+                else:
+                    print("   💡 Check your internet connection")
+
+            print("   ℹ️  Falling back to basic installation (no AI assistance)")
             # Fallback: basic installation plan
             return self._generate_basic_install_plan(package)
     
@@ -550,10 +566,24 @@ Analyze the error and provide:
             return json.loads(content)
         
         except Exception as e:
-            print(f"Error analysis failed: {e}")
+            error_msg = str(e)
+            print(f"\n⚠️  AI error analysis unavailable: {error_msg}")
+
+            # Provide helpful error messages
+            if "404" in error_msg:
+                if self.config.llm_provider == "ollama":
+                    print(f"   💡 Make sure Ollama is running and the model '{self.config.ollama_model}' is installed")
+                    print(f"   💡 Try: ollama pull {self.config.ollama_model}")
+
+            print("   ℹ️  Please check the error output above for details")
             return {
                 "error_type": "unknown",
-                "diagnosis": "Unable to analyze error",
-                "solutions": ["Check the error output manually"],
+                "diagnosis": "AI error analysis unavailable - check error output above",
+                "solutions": [
+                    "Read the error message carefully",
+                    "Search for the error online",
+                    "Check package documentation",
+                    "Try installing dependencies manually"
+                ],
                 "commands": []
             }

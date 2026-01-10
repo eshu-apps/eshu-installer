@@ -24,7 +24,7 @@ package() {
 
     # Install all source files
     install -dm755 "$pkgdir/opt/$pkgname"
-    cp -r src setup.py requirements.txt LICENSE README.md "$pkgdir/opt/$pkgname/"
+    cp -r src setup.py requirements.txt LICENSE README.md systemd "$pkgdir/opt/$pkgname/"
 
     # Install the installer script
     install -Dm755 install-eshu.sh "$pkgdir/opt/$pkgname/install-eshu.sh"

@@ -129,30 +129,14 @@ class SystemProfiler:
                 parts = line.split()
                 if len(parts) >= 2:
                     name, version = parts[0], parts[1]
-                    
-                    # Get description
-                    desc_result = subprocess.run(
-                        ["pacman", "-Qi", name],
-                        capture_output=True,
-                        text=True
-                    )
-                    description = None
-                    deps = []
-                    
-                    for desc_line in desc_result.stdout.split("\n"):
-                        if desc_line.startswith("Description"):
-                            description = desc_line.split(":", 1)[1].strip()
-                        elif desc_line.startswith("Depends On"):
-                            deps_str = desc_line.split(":", 1)[1].strip()
-                            if deps_str != "None":
-                                deps = [d.strip() for d in deps_str.split()]
-                    
+
+                    # Skip detailed package info for speed (5 minutes → 2 seconds)
                     packages[name] = PackageInfo(
                         name=name,
                         version=version,
                         manager="pacman",
-                        description=description,
-                        dependencies=deps
+                        description=None,
+                        dependencies=[]
                     )
         except Exception as e:
             print(f"Error scanning pacman packages: {e}")

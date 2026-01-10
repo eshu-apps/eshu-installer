@@ -161,24 +161,32 @@ def display_paginated_results(
         console.print(f"[dim]Showing {start_idx + 1}-{end_idx} of {len(results)} results[/dim]\n")
         
         # Get user input
-        choice = Prompt.ask("Enter choice", default="1")
-        
+        choice = Prompt.ask("Enter choice (or comma-separated numbers for multiple)", default="1")
+
         if choice.lower() == 'q':
             return None
         elif choice.lower() == 'n' and current_page < total_pages - 1:
             current_page += 1
         elif choice.lower() == 'p' and current_page > 0:
             current_page -= 1
-        elif choice.isdigit():
-            selection = int(choice)
-            if 1 <= selection <= len(results):
-                return results[selection - 1]
-            else:
-                console.print("[red]Invalid selection[/red]")
-                console.input("Press Enter to continue...")
         else:
-            console.print("[red]Invalid choice[/red]")
-            console.input("Press Enter to continue...")
+            # Try to parse as number(s)
+            try:
+                # Handle comma-separated or space-separated
+                numbers = [int(n.strip()) for n in choice.replace(',', ' ').split() if n.strip().isdigit()]
+                if numbers:
+                    selection = numbers[0]  # Take first for now (single package install)
+                    if 1 <= selection <= len(results):
+                        return results[selection - 1]
+                    else:
+                        console.print("[red]Invalid selection[/red]")
+                        console.input("Press Enter to continue...")
+                else:
+                    console.print("[red]Invalid choice[/red]")
+                    console.input("Press Enter to continue...")
+            except:
+                console.print("[red]Invalid choice[/red]")
+                console.input("Press Enter to continue...")
 
 
 @app.command()

@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/eshu profile --refresh
+ExecStart=/home/%u/.local/bin/eshu profile --refresh
 User=root
 StandardOutput=journal
 StandardError=journal

@@ -261,6 +261,41 @@ echo ""
 print_success "Happy installing! 🚀"
 echo ""
 
+# Install systemd service for auto-profiling
+print_header "System Profiling Service"
+echo ""
+print_info "Install systemd service to auto-scan system at boot?"
+print_info "Benefits: Instant searches, pre-cached system info"
+echo ""
+read -p "Install service? [Y/n] " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    SYSTEMD_SRC="$INSTALL_DIR/repo/systemd"
+
+    if [ -d "$SYSTEMD_SRC" ]; then
+        # Update service file to use correct eshu path
+        sudo cp "$SYSTEMD_SRC/eshu-profiler.service" /etc/systemd/system/
+        sudo cp "$SYSTEMD_SRC/eshu-profiler.timer" /etc/systemd/system/
+
+        # Update ExecStart path in service
+        sudo sed -i "s|/usr/bin/eshu|$WRAPPER_SCRIPT|g" /etc/systemd/system/eshu-profiler.service
+
+        sudo systemctl daemon-reload
+        sudo systemctl enable --now eshu-profiler.timer
+
+        print_success "Systemd service installed and enabled!"
+        print_info "System will be profiled at boot + daily"
+        print_info "Run manually: sudo systemctl start eshu-profiler"
+    else
+        print_warning "Systemd files not found, skipping"
+    fi
+fi
+
+# Run initial profile scan
+print_header "Initial System Scan"
+print_info "Scanning system (one-time, ~2 seconds)..."
+"$WRAPPER_SCRIPT" profile --refresh &>/dev/null || print_warning "Profile scan failed (non-critical)"
+
 # Run setup wizard if this is the first install
 if [ ! -f "$INSTALL_DIR/.setup_complete" ]; then
     print_header "Running Setup Wizard"

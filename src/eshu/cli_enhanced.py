@@ -83,7 +83,7 @@ def check_license_feature(license_mgr: LicenseManager, feature: str, show_messag
             feature_name = feature_names.get(feature, feature.replace("_", " ").title())
 
             console.print(f"\n[yellow]🔒 '{feature_name}' is a Premium feature[/yellow]")
-            console.print(f"[dim]Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://gumroad.com/l/eshu-donate[/dim]\n")
+            console.print(f"[dim]Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00[/dim]\n")
         return False
 
     return True
@@ -542,7 +542,7 @@ def install(
                     f"[dim]{eshu_path_data['reasoning'][:100]}...[/dim]\n\n"
                     f"[yellow]🔒 Unlock complete bundle with Premium[/yellow]\n"
                     f"[dim]Get one-click installation of AI-curated package sets\n"
-                    f"Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://gumroad.com/l/eshu-donate[/dim]",
+                    f"Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00[/dim]",
                     title="🚀 Complete Setup Available (Premium)",
                     border_style="yellow"
                 ))
@@ -712,7 +712,7 @@ def install(
         elif can_use_llm:
             # Show upgrade prompt contextually
             console.print(f"\n[dim]💡 Want AI-powered lightweight suggestions? Upgrade to Premium![/dim]")
-            console.print(f"[dim]   {license_mgr.get_upgrade_url()} | https://gumroad.com/l/eshu-donate[/dim]")
+            console.print(f"[dim]   {license_mgr.get_upgrade_url()} | https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00[/dim]")
         
         # Show full description
         console.print(f"\n[bold cyan]Package Details:[/bold cyan]")
@@ -839,7 +839,7 @@ def license_cmd(
             
             if license.tier == "free":
                 console.print(f"\n[yellow]💎 Upgrade to Premium:[/yellow] {license_mgr.get_upgrade_url()}")
-                console.print(f"[cyan]💝 Support Development:[/cyan] https://gumroad.com/l/eshu-donate")
+                console.print(f"[cyan]💝 Support Development:[/cyan] https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00")
         
         elif action == "activate":
             if not key:
@@ -881,7 +881,7 @@ def license_cmd(
             console.print("  • $9.99/month")
             console.print("  • $39.99/year (save 33%)")
             console.print("\n[cyan]💝 Just want to support? Donate:[/cyan]")
-            console.print("   https://gumroad.com/l/eshu-donate")
+            console.print("   https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00")
             console.print("   Every contribution helps keep ESHU free!")
         
         else:
@@ -903,7 +903,7 @@ def donate():
     console.print("  • Maintain servers and infrastructure")
     console.print("  • Support the developer\n")
     console.print("[green]Ways to support:[/green]")
-    console.print("  💝 Donate (Pay What You Want): [cyan]https://gumroad.com/l/eshu-donate[/cyan]")
+    console.print("  💝 Donate (Pay What You Want): [cyan]https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00[/cyan]")
     console.print("  💎 Upgrade to Premium: [cyan]https://eshuapps.gumroad.com/l/eshu-premium[/cyan]")
     console.print("  ⭐ Star on GitHub: [cyan]https://github.com/eshu-apps/eshu-installer[/cyan]")
     console.print("  📣 Share with friends: [cyan]https://eshu-apps.com[/cyan]")

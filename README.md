@@ -12,7 +12,7 @@
 [![Website](https://img.shields.io/badge/🌐-eshu--apps.com-blue)](https://eshu-apps.com)
 
 <a href="https://eshuapps.gumroad.com/l/eshu-premium"><img src="https://img.shields.io/badge/Premium-$9.99%2Fmonth-gold.svg?style=for-the-badge" alt="Upgrade to Premium"></a>
-<a href="https://gumroad.com/l/eshu-donate"><img src="https://img.shields.io/badge/💝-Donate-ff69b4.svg?style=for-the-badge" alt="Donate"></a>
+<a href="https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00"><img src="https://img.shields.io/badge/💝-Donate-ff69b4.svg?style=for-the-badge" alt="Donate"></a>
 
 </div>
 
@@ -348,7 +348,7 @@ eshu config set-provider anthropic
 | **Cloud Bundle Sync** | ❌ | ✅ |
 | **Priority Support** | ❌ | ✅ |
 
-[**🚀 Upgrade to Premium**](https://eshuapps.gumroad.com/l/eshu-premium) | [💝 Donate](https://gumroad.com/l/eshu-donate)
+[**🚀 Upgrade to Premium**](https://eshuapps.gumroad.com/l/eshu-premium) | [💝 Donate](https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00)
 
 </div>
 
@@ -559,7 +559,7 @@ Built with:
 - 📧 **Support**: support@eshu-apps.com
 - 🐛 **Bug Reports**: [GitHub Issues](https://github.com/eshu-apps/eshu-installer/issues)
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/eshu-apps/eshu-installer/discussions)
-- 💝 **Donate**: [Support the Project](https://gumroad.com/l/eshu-donate)
+- 💝 **Donate**: [Support the Project](https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00)
 
 ---
 
@@ -569,7 +569,7 @@ Built with:
 
 **Stop juggling package managers. Start using ESHU.**
 
-[Website](https://eshu-apps.com) • [Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshuapps.gumroad.com/l/eshu-premium) • [Donate](https://gumroad.com/l/eshu-donate)
+[Website](https://eshu-apps.com) • [Get Started](https://github.com/eshu-apps/eshu-installer) • [Premium](https://eshuapps.gumroad.com/l/eshu-premium) • [Donate](https://buy.stripe.com/7sYfZh8ul9QPe9K3eh3Nm00)
 
 ---
 

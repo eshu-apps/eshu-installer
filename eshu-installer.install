@@ -8,10 +8,10 @@ post_install() {
 
     # Run the install script as the user who invoked sudo
     if [ -n "$SUDO_USER" ]; then
-        sudo -u "$SUDO_USER" bash /opt/eshu-installer/install-eshu.sh --force
+        sudo -u "$SUDO_USER" bash /usr/share/eshu-installer/install-eshu.sh --force
     else
         echo "Please run the setup manually:"
-        echo "  cd /opt/eshu-installer && ./install-eshu.sh"
+        echo "  cd /usr/share/eshu-installer && ./install-eshu.sh"
     fi
 }
 

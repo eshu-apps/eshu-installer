@@ -365,6 +365,12 @@ def install(
         license = license_mgr.get_license()
 
         # Initialize system profiler (needed for AI bundle suggestions)
+        # Initialize analytics first (privacy-respecting)
+        analytics = Analytics(config.analytics_db_path, enabled=config.analytics_enabled)
+
+        # Scan system with performance tracking
+        import time
+        scan_start = time.time()
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -374,15 +380,16 @@ def install(
             profiler = SystemProfiler(cache_dir=config.cache_dir)
             profile = profiler.get_profile(force_refresh=refresh, cache_ttl=config.profile_cache_ttl)
             progress.update(task, completed=True)
+        scan_duration = time.time() - scan_start
+
+        # Track system scan performance
+        analytics.track_performance("system_scan", scan_duration)
 
         # Initialize LLM engine for AI features
         llm = LLMEngine(config)
 
         # Initialize bundle database for caching
         bundle_db = BundleDatabase(config.bundle_db_path)
-
-        # Initialize analytics (privacy-respecting)
-        analytics = Analytics(config.analytics_db_path, enabled=config.analytics_enabled)
 
         # Show nice header for multi-package install
         if len(packages) > 1:
@@ -397,27 +404,18 @@ def install(
         # Track search in analytics
         analytics.track_search(primary_package)
 
-        # Check for Eshu's Path - PREMIUM FEATURE (now with AI!)
+        # Generate Eshu's Path bundle for EVERYONE (build community database)
+        # Show differently based on license: full for premium, teaser for free
         eshu_path_data = None
-        if check_license_feature(license_mgr, "eshu_paths", show_message=False):
-            # Premium user - use AI-powered bundle suggestion with caching
-            console.print(f"\n[dim]🤖 AI is checking bundle cache and analyzing '{primary_package}'...[/dim]")
-            eshu_path_data = suggest_eshu_path_with_llm(
-                primary_package, llm, profile,
-                bundle_db=bundle_db,
-                config=config
-            )
-        else:
-            # Free user - only show predefined paths as teasers
-            eshu_path_obj = get_eshu_path(primary_package)
-            if eshu_path_obj:
-                eshu_path_data = {
-                    "name": eshu_path_obj.name,
-                    "description": eshu_path_obj.description,
-                    "packages": eshu_path_obj.packages,
-                    "reasoning": eshu_path_obj.reasoning,
-                    "source": "curated"
-                }
+        console.print(f"\n[dim]🤖 AI is checking bundle cache and analyzing '{primary_package}'...[/dim]")
+        eshu_path_data = suggest_eshu_path_with_llm(
+            primary_package, llm, profile,
+            bundle_db=bundle_db,
+            config=config
+        )
+
+        # Store in database for everyone (builds community insights)
+        # Premium users get to USE it, free users just help build the database
 
         if eshu_path_data:
             if check_license_feature(license_mgr, "eshu_paths", show_message=False):
@@ -463,16 +461,63 @@ def install(
                     console.print(f"[cyan]▶ Running:[/cyan] {' '.join(install_cmd)}\n")
 
                     # Execute installation
+                    import time
+                    start_time = time.time()
                     try:
                         result = subprocess.run(
                             install_cmd,
                             check=True,
                             text=True
                         )
+                        install_duration = time.time() - start_time
+
+                        # Track successful bundle installation
+                        bundle_db.record_success(primary_package.lower(), profile.distro.lower(), profile.distro_version)
+                        manager_used = install_cmd[0] if install_cmd[0] != "sudo" else install_cmd[1]
+                        analytics.track_installation(
+                            package_name=f"bundle:{primary_package}",
+                            package_manager=manager_used,
+                            distro=profile.distro,
+                            distro_version=profile.distro_version,
+                            success=True,
+                            duration_seconds=install_duration
+                        )
+                        analytics.track_manager_usage(
+                            package_manager=manager_used,
+                            operation="install_bundle",
+                            success=True
+                        )
+
                         console.print(f"\n[green]✓ Successfully installed {len(eshu_path_data['packages'])} packages from Eshu's Path![/green]")
                         console.print(f"[dim]{eshu_path_data['name']} is now ready to use![/dim]\n")
                         return
                     except subprocess.CalledProcessError as e:
+                        install_duration = time.time() - start_time
+
+                        # Track failed bundle installation
+                        bundle_db.record_failure(primary_package.lower(), profile.distro.lower(), profile.distro_version)
+                        manager_used = install_cmd[0] if install_cmd[0] != "sudo" else install_cmd[1]
+                        analytics.track_installation(
+                            package_name=f"bundle:{primary_package}",
+                            package_manager=manager_used,
+                            distro=profile.distro,
+                            distro_version=profile.distro_version,
+                            success=False,
+                            duration_seconds=install_duration
+                        )
+                        analytics.track_manager_usage(
+                            package_manager=manager_used,
+                            operation="install_bundle",
+                            success=False
+                        )
+                        analytics.track_error(
+                            package_name=f"bundle:{primary_package}",
+                            package_manager=manager_used,
+                            distro=profile.distro,
+                            error_type="bundle_install_failure",
+                            error_message=str(e)[:500]
+                        )
+
                         console.print(f"\n[red]✗ Installation failed![/red]")
                         console.print(f"[yellow]Some packages may have installed successfully. Check the output above.[/yellow]\n")
                         return
@@ -480,18 +525,31 @@ def install(
                         console.print(f"\n[yellow]Installation cancelled by user.[/yellow]\n")
                         return
             else:
-                # Free user - show teaser
-                console.print(f"\n[bold cyan]💎 Eshu's Path Available (Premium)[/bold cyan]")
+                # Free user - show AI-generated bundle but obfuscate package list
+                # Show first 2 packages, hide the rest (prevents copy-paste)
+                source_badge = "🤖 AI-Generated" if eshu_path_data.get("source") == "ai-generated" or "ai" in eshu_path_data.get("source", "") else "📦 Curated"
+                visible_packages = eshu_path_data['packages'][:2]
+                hidden_count = len(eshu_path_data['packages']) - 2
+
+                console.print(f"\n[bold cyan]💎 {source_badge} Eshu's Path Detected[/bold cyan]")
                 console.print(Panel(
                     f"[bold]{eshu_path_data['name']}[/bold]\n\n"
-                    f"Complete setup with {len(eshu_path_data['packages'])} curated packages:\n"
-                    f"{', '.join(eshu_path_data['packages'][:3])}...\n\n"
-                    f"[yellow]🔒 Unlock Eshu's Path with Premium[/yellow]\n"
-                    f"[dim]Get complete, tested package bundles for instant setups\n"
+                    f"{eshu_path_data['description']}\n\n"
+                    f"[green]AI suggests {len(eshu_path_data['packages'])} packages for complete setup:[/green]\n"
+                    f"  • {visible_packages[0]}\n"
+                    f"  • {visible_packages[1]}\n"
+                    f"  • [dim]... and {hidden_count} more essential packages[/dim]\n\n"
+                    f"[dim]{eshu_path_data['reasoning'][:100]}...[/dim]\n\n"
+                    f"[yellow]🔒 Unlock complete bundle with Premium[/yellow]\n"
+                    f"[dim]Get one-click installation of AI-curated package sets\n"
                     f"Upgrade: {license_mgr.get_upgrade_url()} | Donate: https://gumroad.com/l/eshu-donate[/dim]",
-                    title="🚀 Complete Setup (Premium)",
+                    title="🚀 Complete Setup Available (Premium)",
                     border_style="yellow"
                 ))
+
+                # Still track that we showed this bundle (analytics)
+                console.print(f"[dim]💡 Your search helped improve ESHU's AI recommendations database[/dim]\n")
+
                 if not Confirm.ask("\nContinue with single package install?", default=True):
                     return
 
@@ -571,9 +629,10 @@ def install(
         else:
             search_terms = [query]
         
-        # Search for packages
+        # Search for packages with performance tracking
         all_results = []
         for term in search_terms:
+            search_start = time.time()
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
@@ -582,7 +641,11 @@ def install(
                 task = progress.add_task(f"🔎 Searching for '{term}'...", total=None)
                 results = searcher.search_all(term)
                 progress.update(task, completed=True)
-            
+            search_duration = time.time() - search_start
+
+            # Track search performance
+            analytics.track_performance("package_search", search_duration)
+
             all_results.extend(results)
         
         if not all_results:
@@ -681,13 +744,41 @@ def install(
                     console.print("[yellow]⚠️  Snapshot creation failed, continuing anyway...[/yellow]")
         
         # Install package
+        import time
         installer = PackageInstaller(config, llm, profile)
+        install_start = time.time()
         success = installer.install(selected_package, auto_confirm=yes)
-        
+        install_duration = time.time() - install_start
+
+        # Track installation in analytics
+        analytics.track_installation(
+            package_name=selected_package.name,
+            package_manager=selected_package.manager,
+            distro=profile.distro,
+            distro_version=profile.distro_version,
+            success=success,
+            duration_seconds=install_duration
+        )
+
+        # Track package manager usage
+        analytics.track_manager_usage(
+            package_manager=selected_package.manager,
+            operation="install",
+            success=success
+        )
+
         if success:
             console.print(f"\n[green]✓ Successfully installed {selected_package.name}![/green]")
             installer.verify_installation(selected_package)
         else:
+            # Track error for failed installation
+            analytics.track_error(
+                package_name=selected_package.name,
+                package_manager=selected_package.manager,
+                distro=profile.distro,
+                error_type="install_failure",
+                error_message="Installation command failed"
+            )
             console.print(f"\n[red]❌ Failed to install {selected_package.name}[/red]")
             sys.exit(1)
     

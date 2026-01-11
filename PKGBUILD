@@ -16,7 +16,7 @@ optdepends=(
 )
 install=$pkgname.install
 source=("$pkgname-$pkgver.tar.gz::https://github.com/eshu-apps/$pkgname/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('4593e8218f5fdded7eb456f63edcc1f92ab7165d6725f652ee0758813562d9f9')
 
 package() {
     cd "$pkgname-$pkgver"

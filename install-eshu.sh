@@ -270,7 +270,7 @@ echo ""
 read -p "Install service? [Y/n] " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-    SYSTEMD_SRC="$INSTALL_DIR/repo/systemd"
+    SYSTEMD_SRC="$INSTALL_DIR/systemd"
 
     if [ -d "$SYSTEMD_SRC" ]; then
         # Update service file to use correct eshu path

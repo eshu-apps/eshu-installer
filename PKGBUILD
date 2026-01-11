@@ -1,7 +1,7 @@
 # Maintainer: Eshu Team <support@eshu-apps.com>
 # OPTION B: Auto-installs with venv in post-install
 pkgname=eshu-installer
-pkgver=0.4.5
+pkgver=0.4.6
 pkgrel=1
 pkgdesc="AI-Driven Universal Package Installer for Linux"
 arch=('any')
